@@ -16,7 +16,7 @@ The **Behavioral Differences** section is separate — those tests reflect desig
 
 | Framework | Package | Version | Published |
 |-----------|---------|---------|-----------|
-| alien-signals | `alien-signals` | 3.1.2 | 2025-12-24 |
+| alien-signals | `alien-signals` | 3.2.0 | 2026-05-12 |
 | @preact/signals-core | `@preact/signals-core` | 1.14.2 | 2026-05-11 |
 | @reactively/core | `@reactively/core` | 0.0.8 | 2023-03-20 |
 | tansu | `@amadeus-it-group/tansu` | 2.0.0 | 2024-12-04 |
