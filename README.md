@@ -306,6 +306,56 @@ The **Behavioral Differences** section is separate — those tests reflect desig
 
 ## Usage
 
+### Test your own framework
+
+Install the package:
+
+```sh
+npm install reactive-framework-test-suite
+```
+
+Implement the `ReactiveFramework` adapter:
+
+```ts
+import type { ReactiveFramework } from "reactive-framework-test-suite";
+
+const myFramework: ReactiveFramework = {
+  name: "my-framework",
+  signal(initialValue) { /* ... */ },
+  computed(fn) { /* ... */ },
+  effect(fn) { /* ... return dispose */ },
+  run(fn) { /* ... */ },
+  // Optional:
+  batch(fn) { /* ... */ },
+  untracked(fn) { /* ... */ },
+  effectCleanup: true,   // set true if effect supports cleanup return
+  computedThrows: true,  // set true if computed re-throws on read
+};
+```
+
+Wire it up with your test runner (vitest, jest, mocha, etc.):
+
+```ts
+import { testSuite, SkipTest } from "reactive-framework-test-suite";
+
+for (const { section, cases } of testSuite) {
+  describe(section, () => {
+    for (const [name, fn] of Object.entries(cases)) {
+      test(name, () => {
+        try {
+          myFramework.run(() => fn(myFramework));
+        } catch (e) {
+          if (e instanceof SkipTest) return; // optional API not available
+          throw e;
+        }
+      });
+    }
+  });
+}
+```
+
+### Run the cross-framework matrix locally
+
 ```sh
 npm install
 npm test
