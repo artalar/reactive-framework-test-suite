@@ -1,8 +1,8 @@
 # Reactive Framework Test Suite
 
-Cross-library test suite for comparing reactive signal behavior across **13 frameworks** with **180 test cases**.
+Cross-library test suite for comparing reactive signal behavior across **14 frameworks** with **180 test cases**.
 
-> 1983 passed, 155 failed, 202 skipped out of 2340 total runs
+> 2078 passed, 190 failed, 252 skipped out of 2520 total runs
 
 Test cases are collected and adapted from the test suites of all participating frameworks — thanks to every project for their thorough testing work. This suite focuses on **reactive semantics** (propagation, batching, disposal, edge cases), not API completeness. Tests that require an optional capability (e.g. `batch`) are skipped (⬜) for frameworks that don't expose it, rather than marked as failures.
 
@@ -29,6 +29,7 @@ The **Behavioral Differences** section is separate — those tests reflect desig
 | S.js | `s-js` | 0.4.9 | 2018-07-28 |
 | @angular/core | `@angular/core` | 20.3.20 | 2026-05-06 |
 | anod | `anod` | 0.9.1 | 2026-04-27 |
+| r3 | `r3` | 0.0.1 | 2014-04-11 |
 
 ## Summary
 
@@ -47,44 +48,47 @@ The **Behavioral Differences** section is separate — those tests reflect desig
 | svelte                 |  131 |   12 |   37 |   180 |
 | S.js                   |  130 |   41 |    9 |   180 |
 | @reactively/core       |  114 |   16 |   50 |   180 |
+| r3                     |   95 |   35 |   50 |   180 |
 
 ## Results
 
 ### Graph Propagation
 
-| Framework              | #1..#6,... ×17 | #7 | #187,#189,#205 | #188 | #192 | #204 |
-| ---------------------- | -------------- | -- | -------------- | ---- | ---- | ---- |
-| alien-signals          |              ✅ |  ✅ |              ✅ |    ✅ |    ✅ |    ✅ |
-| @preact/signals-core   |              ✅ |  ✅ |              ✅ |    ✅ |    ✅ |    ✅ |
-| @reactively/core       |              ✅ |  ✅ |              ✅ |    ⬜ |    ✅ |    ⬜ |
-| tansu                  |              ✅ |  ✅ |              ✅ |    ✅ |    ✅ |    ✅ |
-| signal-polyfill (TC39) |              ✅ |  ✅ |              ✅ |    ⬜ |    ✅ |    ⬜ |
-| @vue/reactivity        |              ✅ |  ✅ |              ✅ |    ✅ |    ✅ |    ✅ |
-| mobx                   |              ✅ |  ❌ |              ✅ |    ✅ |    ✅ |    ✅ |
-| svelte                 |              ✅ |  ✅ |              ✅ |    ⬜ |    ✅ |    ⬜ |
-| solid-js               |              ✅ |  ✅ |              ❌ |    ❌ |    ✅ |    ✅ |
-| @solidjs/signals       |              ✅ |  ✅ |              ✅ |    ✅ |    ✅ |    ✅ |
-| S.js                   |              ✅ |  ❌ |              ❌ |    ❌ |    ❌ |    ✅ |
-| @angular/core          |              ✅ |  ✅ |              ✅ |    ⬜ |    ✅ |    ⬜ |
-| anod                   |              ✅ |  ✅ |              ✅ |    ✅ |    ✅ |    ✅ |
+| Framework              | #1..#6,... ×17 | #7 | #187,#205 | #188 | #189 | #192 | #204 |
+| ---------------------- | -------------- | -- | --------- | ---- | ---- | ---- | ---- |
+| alien-signals          |              ✅ |  ✅ |         ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
+| @preact/signals-core   |              ✅ |  ✅ |         ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
+| @reactively/core       |              ✅ |  ✅ |         ✅ |    ⬜ |    ✅ |    ✅ |    ⬜ |
+| tansu                  |              ✅ |  ✅ |         ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
+| signal-polyfill (TC39) |              ✅ |  ✅ |         ✅ |    ⬜ |    ✅ |    ✅ |    ⬜ |
+| @vue/reactivity        |              ✅ |  ✅ |         ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
+| mobx                   |              ✅ |  ❌ |         ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
+| svelte                 |              ✅ |  ✅ |         ✅ |    ⬜ |    ✅ |    ✅ |    ⬜ |
+| solid-js               |              ✅ |  ✅ |         ❌ |    ❌ |    ❌ |    ✅ |    ✅ |
+| @solidjs/signals       |              ✅ |  ✅ |         ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
+| S.js                   |              ✅ |  ❌ |         ❌ |    ❌ |    ❌ |    ❌ |    ✅ |
+| @angular/core          |              ✅ |  ✅ |         ✅ |    ⬜ |    ✅ |    ✅ |    ⬜ |
+| anod                   |              ✅ |  ✅ |         ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
+| r3                     |              ✅ |  ✅ |         ❌ |    ⬜ |    ✅ |    ✅ |    ⬜ |
 
 ### Dynamic Dependencies
 
-| Framework              | #12..#13 | #14,#16,... ×9 | #193 | #197 | #200 |
-| ---------------------- | -------- | -------------- | ---- | ---- | ---- |
-| alien-signals          |        ✅ |              ✅ |    ✅ |    ✅ |    ✅ |
-| @preact/signals-core   |        ✅ |              ✅ |    ✅ |    ✅ |    ✅ |
-| @reactively/core       |        ✅ |              ✅ |    ✅ |    ✅ |    ❌ |
-| tansu                  |        ✅ |              ✅ |    ✅ |    ✅ |    ✅ |
-| signal-polyfill (TC39) |        ✅ |              ✅ |    ✅ |    ✅ |    ✅ |
-| @vue/reactivity        |        ✅ |              ✅ |    ✅ |    ✅ |    ✅ |
-| mobx                   |        ❌ |              ✅ |    ✅ |    ✅ |    ✅ |
-| svelte                 |        ✅ |              ✅ |    ✅ |    ✅ |    ✅ |
-| solid-js               |        ✅ |              ✅ |    ❌ |    ✅ |    ✅ |
-| @solidjs/signals       |        ✅ |              ✅ |    ✅ |    ✅ |    ✅ |
-| S.js                   |        ✅ |              ✅ |    ❌ |    ❌ |    ✅ |
-| @angular/core          |        ✅ |              ✅ |    ✅ |    ✅ |    ✅ |
-| anod                   |        ✅ |              ✅ |    ✅ |    ✅ |    ✅ |
+| Framework              | #12..#13 | #14,... ×8 | #16 | #193 | #197 | #200 |
+| ---------------------- | -------- | ---------- | --- | ---- | ---- | ---- |
+| alien-signals          |        ✅ |          ✅ |   ✅ |    ✅ |    ✅ |    ✅ |
+| @preact/signals-core   |        ✅ |          ✅ |   ✅ |    ✅ |    ✅ |    ✅ |
+| @reactively/core       |        ✅ |          ✅ |   ✅ |    ✅ |    ✅ |    ❌ |
+| tansu                  |        ✅ |          ✅ |   ✅ |    ✅ |    ✅ |    ✅ |
+| signal-polyfill (TC39) |        ✅ |          ✅ |   ✅ |    ✅ |    ✅ |    ✅ |
+| @vue/reactivity        |        ✅ |          ✅ |   ✅ |    ✅ |    ✅ |    ✅ |
+| mobx                   |        ❌ |          ✅ |   ✅ |    ✅ |    ✅ |    ✅ |
+| svelte                 |        ✅ |          ✅ |   ✅ |    ✅ |    ✅ |    ✅ |
+| solid-js               |        ✅ |          ✅ |   ✅ |    ❌ |    ✅ |    ✅ |
+| @solidjs/signals       |        ✅ |          ✅ |   ✅ |    ✅ |    ✅ |    ✅ |
+| S.js                   |        ✅ |          ✅ |   ✅ |    ❌ |    ❌ |    ✅ |
+| @angular/core          |        ✅ |          ✅ |   ✅ |    ✅ |    ✅ |    ✅ |
+| anod                   |        ✅ |          ✅ |   ✅ |    ✅ |    ✅ |    ✅ |
+| r3                     |        ✅ |          ✅ |   ❌ |    ❌ |    ✅ |    ✅ |
 
 ### Computed Evaluation
 
@@ -103,6 +107,7 @@ The **Behavioral Differences** section is separate — those tests reflect desig
 | S.js                   |       ✅ |                   ✅ |    ❌ |        ❌ |    ✅ |
 | @angular/core          |       ✅ |                   ✅ |    ⬜ |        ✅ |    ⬜ |
 | anod                   |       ✅ |                   ✅ |    ❌ |        ✅ |    ✅ |
+| r3                     |       ✅ |                   ✅ |    ⬜ |        ✅ |    ⬜ |
 
 ### Equality & Same-Value Optimization
 
@@ -121,6 +126,7 @@ The **Behavioral Differences** section is separate — those tests reflect desig
 | S.js                   |           ❌ |    ❌ |
 | @angular/core          |           ✅ |    ✅ |
 | anod                   |           ✅ |    ✅ |
+| r3                     |           ✅ |    ✅ |
 
 ### Effect Lifecycle
 
@@ -139,42 +145,45 @@ The **Behavioral Differences** section is separate — those tests reflect desig
 | S.js                   |               ✅ |               ✅ |   ❌ |   ❌ |    ✅ |    ✅ |    ✅ |    ❌ |    ✅ |
 | @angular/core          |               ✅ |               ✅ |   ❌ |   ⬜ |    ❌ |    ✅ |    ❌ |    ❌ |    ❌ |
 | anod                   |               ✅ |               ✅ |   ✅ |   ✅ |    ✅ |    ✅ |    ✅ |    ❌ |    ✅ |
+| r3                     |               ✅ |               ⬜ |   ⬜ |   ⬜ |    ⬜ |    ✅ |    ⬜ |    ✅ |    ✅ |
 
 ### Nested Effects & Ordering
 
-| Framework              | #43..#44,... ×4 | #45 | #46 | #47 | #163 | #170 | #209..#210 |
-| ---------------------- | --------------- | --- | --- | --- | ---- | ---- | ---------- |
-| alien-signals          |               ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ✅ |          ✅ |
-| @preact/signals-core   |               ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ✅ |          ❌ |
-| @reactively/core       |               ❌ |   ⬜ |   ✅ |   ✅ |    ❌ |    ❌ |          ❌ |
-| tansu                  |               ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ✅ |          ❌ |
-| signal-polyfill (TC39) |               ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ✅ |          ❌ |
-| @vue/reactivity        |               ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ✅ |          ❌ |
-| mobx                   |               ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ✅ |          ❌ |
-| svelte                 |               ✅ |   ⬜ |   ✅ |   ❌ |    ❌ |    ✅ |          ❌ |
-| solid-js               |               ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ✅ |          ❌ |
-| @solidjs/signals       |               ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ✅ |          ✅ |
-| S.js                   |               ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ❌ |          ❌ |
-| @angular/core          |               ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ✅ |          ❌ |
-| anod                   |               ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ✅ |          ✅ |
+| Framework              | #43..#44,#164 | #45 | #46 | #47 | #163 | #170 | #209 | #210 | #48 |
+| ---------------------- | ------------- | --- | --- | --- | ---- | ---- | ---- | ---- | --- |
+| alien-signals          |             ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |   ✅ |
+| @preact/signals-core   |             ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ✅ |    ❌ |    ❌ |   ✅ |
+| @reactively/core       |             ❌ |   ⬜ |   ✅ |   ✅ |    ❌ |    ❌ |    ❌ |    ❌ |   ❌ |
+| tansu                  |             ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ✅ |    ❌ |    ❌ |   ✅ |
+| signal-polyfill (TC39) |             ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ✅ |    ❌ |    ❌ |   ✅ |
+| @vue/reactivity        |             ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ✅ |    ❌ |    ❌ |   ✅ |
+| mobx                   |             ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ✅ |    ❌ |    ❌ |   ✅ |
+| svelte                 |             ✅ |   ⬜ |   ✅ |   ❌ |    ❌ |    ✅ |    ❌ |    ❌ |   ✅ |
+| solid-js               |             ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ✅ |    ❌ |    ❌ |   ✅ |
+| @solidjs/signals       |             ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |   ✅ |
+| S.js                   |             ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ❌ |    ❌ |    ❌ |   ✅ |
+| @angular/core          |             ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ✅ |    ❌ |    ❌ |   ✅ |
+| anod                   |             ✅ |   ✅ |   ✅ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |   ✅ |
+| r3                     |             ✅ |   ⬜ |   ✅ |   ✅ |    ✅ |    ✅ |    ❌ |    ✅ |   ❌ |
 
 ### Inner Write
 
-| Framework              | #50,#186 | #51 | #52..#53,... ×17 | #54,#139 | #179 | #57 | #182 | #183 | #185 |
-| ---------------------- | -------- | --- | ---------------- | -------- | ---- | --- | ---- | ---- | ---- |
-| alien-signals          |        ✅ |   ✅ |                ✅ |        ✅ |    ✅ |   ✅ |    ✅ |    ✅ |    ✅ |
-| @preact/signals-core   |        ✅ |   ✅ |                ✅ |        ✅ |    ✅ |   ✅ |    ✅ |    ✅ |    ✅ |
-| @reactively/core       |        ❌ |   ⬜ |                ✅ |        ✅ |    ❌ |   ✅ |    ⬜ |    ✅ |    ✅ |
-| tansu                  |        ✅ |   ⬜ |                ✅ |        ✅ |    ❌ |   ✅ |    ✅ |    ✅ |    ✅ |
-| signal-polyfill (TC39) |        ✅ |   ✅ |                ✅ |        ✅ |    ❌ |   ✅ |    ⬜ |    ✅ |    ✅ |
-| @vue/reactivity        |        ✅ |   ✅ |                ✅ |        ✅ |    ✅ |   ✅ |    ✅ |    ✅ |    ✅ |
-| mobx                   |        ✅ |   ⬜ |                ✅ |        ✅ |    ✅ |   ✅ |    ✅ |    ✅ |    ✅ |
-| svelte                 |        ✅ |   ✅ |                ✅ |        ❌ |    ❌ |   ❌ |    ⬜ |    ✅ |    ✅ |
-| solid-js               |        ✅ |   ✅ |                ✅ |        ✅ |    ❌ |   ✅ |    ✅ |    ❌ |    ⬜ |
-| @solidjs/signals       |        ✅ |   ⬜ |                ✅ |        ✅ |    ❌ |   ✅ |    ✅ |    ✅ |    ✅ |
-| S.js                   |        ✅ |   ❌ |                ✅ |        ✅ |    ❌ |   ✅ |    ❌ |    ❌ |    ⬜ |
-| @angular/core          |        ✅ |   ✅ |                ✅ |        ✅ |    ❌ |   ❌ |    ⬜ |    ✅ |    ✅ |
-| anod                   |        ✅ |   ✅ |                ✅ |        ✅ |    ❌ |   ✅ |    ❌ |    ✅ |    ✅ |
+| Framework              | #50 | #51 | #52..#53,... ×14 | #54,#139 | #180..#181,#184 | #179 | #57 | #182 | #183 | #185 | #186 |
+| ---------------------- | --- | --- | ---------------- | -------- | --------------- | ---- | --- | ---- | ---- | ---- | ---- |
+| alien-signals          |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ✅ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
+| @preact/signals-core   |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ✅ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
+| @reactively/core       |   ❌ |   ⬜ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ⬜ |    ✅ |    ✅ |    ❌ |
+| tansu                  |   ✅ |   ⬜ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
+| signal-polyfill (TC39) |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ⬜ |    ✅ |    ✅ |    ✅ |
+| @vue/reactivity        |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ✅ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
+| mobx                   |   ✅ |   ⬜ |                ✅ |        ✅ |               ✅ |    ✅ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
+| svelte                 |   ✅ |   ✅ |                ✅ |        ❌ |               ✅ |    ❌ |   ❌ |    ⬜ |    ✅ |    ✅ |    ✅ |
+| solid-js               |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ✅ |    ❌ |    ⬜ |    ✅ |
+| @solidjs/signals       |   ✅ |   ⬜ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
+| S.js                   |   ✅ |   ❌ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ❌ |    ❌ |    ⬜ |    ✅ |
+| @angular/core          |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ❌ |   ❌ |    ⬜ |    ✅ |    ✅ |    ✅ |
+| anod                   |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ❌ |    ✅ |    ✅ |    ✅ |
+| r3                     |   ✅ |   ⬜ |                ✅ |        ✅ |               ❌ |    ❌ |   ❌ |    ⬜ |    ❌ |    ❌ |    ❌ |
 
 ### Cycle & Infinite Loop Detection
 
@@ -193,6 +202,7 @@ The **Behavioral Differences** section is separate — those tests reflect desig
 | S.js                   |                   ✅ |    ✅ |    ✅ |   ✅ |
 | @angular/core          |                   ✅ |    ✅ |    ✅ |   ✅ |
 | anod                   |                   ✅ |    ✅ |    ✅ |   ✅ |
+| r3                     |                   ✅ |    ⬜ |    ❌ |   ✅ |
 
 ### Batching / Transaction
 
@@ -211,6 +221,7 @@ The **Behavioral Differences** section is separate — those tests reflect desig
 | S.js                   |                   ❌ |               ❌ |   ❌ |   ✅ |          ✅ |             ❌ |    ✅ |    ✅ |
 | @angular/core          |                   ⬜ |               ⬜ |   ⬜ |   ⬜ |          ⬜ |             ⬜ |    ✅ |    ✅ |
 | anod                   |                   ✅ |               ❌ |   ❌ |   ✅ |          ✅ |             ❌ |    ✅ |    ✅ |
+| r3                     |                   ⬜ |               ⬜ |   ⬜ |   ⬜ |          ⬜ |             ⬜ |    ⬜ |    ✅ |
 
 ### Untracked / Unsampled Reads
 
@@ -229,6 +240,7 @@ The **Behavioral Differences** section is separate — those tests reflect desig
 | S.js                   |          ✅ |   ✅ |
 | @angular/core          |          ✅ |   ✅ |
 | anod                   |          ✅ |   ✅ |
+| r3                     |          ⬜ |   ⬜ |
 
 ### Error Handling
 
@@ -247,6 +259,7 @@ The **Behavioral Differences** section is separate — those tests reflect desig
 | S.js                   |                   ⬜ |        ✅ |    ❌ |    ✅ |
 | @angular/core          |                   ✅ |        ✅ |    ⬜ |    ❌ |
 | anod                   |                   ✅ |        ✅ |    ❌ |    ✅ |
+| r3                     |                   ❌ |        ⬜ |    ⬜ |    ❌ |
 
 ### Stale Evaluation Order
 
@@ -265,6 +278,7 @@ The **Behavioral Differences** section is separate — those tests reflect desig
 | S.js                   |              ✅ |   ✅ |
 | @angular/core          |              ✅ |   ✅ |
 | anod                   |              ✅ |   ✅ |
+| r3                     |              ❌ |   ❌ |
 
 ### Memory & GC
 
@@ -283,6 +297,7 @@ The **Behavioral Differences** section is separate — those tests reflect desig
 | S.js                   |               ✅ |
 | @angular/core          |               ✅ |
 | anod                   |               ✅ |
+| r3                     |               ❌ |
 
 ### Behavioral Differences
 
@@ -303,6 +318,7 @@ The **Behavioral Differences** section is separate — those tests reflect desig
 | S.js                   | eager | subscribes eagerly | 2 recomputes     | ===       | propagates | returns void | post-write | throws     | keeps subscribed | halts flush | error         | runs 2x per write    | manual bail (200+) | batched            |
 | @angular/core          | lazy  | no subscription    | single recompute | Object.is | skips      | ⬜            | post-write | post-write | keeps subscribed | halts flush | caches error  | runs 2x per write    | manual bail (200+) | unbatched (2 runs) |
 | anod                   | eager | no subscription    | single recompute | ===       | skips      | returns void | post-write | post-write | unsubscribes     | continues   | caches error  | runs 2x per write    | manual bail (200+) | batched            |
+| r3                     | lazy  | error              | error            | error     | error      | ⬜            | post-write | post-write | keeps subscribed | halts flush | returns stale | no re-run            | no throw           | error              |
 
 ## Usage
 

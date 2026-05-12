@@ -237,6 +237,7 @@ const fwPackages = {
   pota: "pota",
   "@angular/core": "@angular/core",
   anod: "anod",
+  r3: "r3",
 };
 
 function getPkgVersion(pkg) {

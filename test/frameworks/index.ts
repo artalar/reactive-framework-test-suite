@@ -52,3 +52,8 @@ try {
   const { anodFramework } = await import("./anod.js");
   frameworks.push(anodFramework);
 } catch {}
+
+try {
+  const { r3Framework } = await import("./r3.js");
+  frameworks.push(r3Framework);
+} catch {}
