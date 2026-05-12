@@ -1,5 +1,15 @@
 import type { ReactiveFramework } from "../framework.js";
-import { signal, computed, effect } from "@angular/core";
+import { signal, computed, untracked } from "@angular/core";
+import { createWatch, type Watch } from "@angular/core/primitives/signals";
+
+let queue = new Set<Watch>();
+
+function flushEffects(): void {
+  for (const watch of queue) {
+    queue.delete(watch);
+    watch.run();
+  }
+}
 
 export const angularSignalsFramework: ReactiveFramework = {
   name: "@angular/core",
@@ -7,7 +17,10 @@ export const angularSignalsFramework: ReactiveFramework = {
     const s = signal(initialValue);
     return {
       read: () => s(),
-      write: (v) => s.set(v),
+      write: (v) => {
+        s.set(v);
+        flushEffects();
+      },
     };
   },
   computed(fn) {
@@ -15,21 +28,29 @@ export const angularSignalsFramework: ReactiveFramework = {
     return { read: () => c() };
   },
   effect(fn) {
-    const ref = effect(fn);
-    return () => ref.destroy();
+    let cleanup: (() => void) | void;
+    const w = createWatch(
+      () => {
+        if (typeof cleanup === "function") cleanup();
+        cleanup = fn() as (() => void) | void;
+      },
+      () => {
+        queue.add(w);
+      },
+      true
+    );
+    w.run();
+    return () => {
+      w.destroy();
+      if (typeof cleanup === "function") cleanup();
+    };
   },
   run(fn) {
     return fn();
   },
-  signalWithEquals(initialValue, equals) {
-    const s = signal(initialValue, { equal: equals });
-    return {
-      read: () => s(),
-      write: (v) => s.set(v),
-    };
+  untracked(fn) {
+    return untracked(fn);
   },
-  computedWithEquals(fn, equals) {
-    const c = computed(fn, { equal: equals });
-    return { read: () => c() };
-  },
+  effectCleanup: true,
+  computedThrows: true,
 };

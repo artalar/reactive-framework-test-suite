@@ -47,3 +47,8 @@ try {
   const { angularSignalsFramework } = await import("./angularSignals.js");
   frameworks.push(angularSignalsFramework);
 } catch {}
+
+try {
+  const { anodFramework } = await import("./anod.js");
+  frameworks.push(anodFramework);
+} catch {}

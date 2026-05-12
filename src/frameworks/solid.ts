@@ -1,12 +1,17 @@
 import type { ReactiveFramework } from "../framework.js";
+// Must import from dist/solid.cjs to get the client reactive runtime.
+// The default "solid-js" resolves to server build under Node condition,
+// which lacks the reactive runtime.
+// @ts-ignore
 import {
   createSignal,
   createMemo,
-  createEffect,
+  createComputed,
   createRoot,
   batch,
   untrack,
-} from "solid-js";
+  onCleanup,
+} from "solid-js/dist/solid.cjs";
 
 export const solidFramework: ReactiveFramework = {
   name: "solid-js",
@@ -21,12 +26,21 @@ export const solidFramework: ReactiveFramework = {
     return { read: createMemo(fn) };
   },
   effect(fn) {
-    createEffect(fn);
-    return () => {};
+    let dispose!: () => void;
+    createRoot((d: () => void) => {
+      dispose = d;
+      createComputed(() => {
+        const cleanup = fn();
+        if (typeof cleanup === "function") {
+          onCleanup(cleanup);
+        }
+      });
+    });
+    return dispose;
   },
   run(fn) {
     let result: any;
-    createRoot((dispose) => {
+    createRoot((dispose: () => void) => {
       result = fn();
     });
     return result;
@@ -37,4 +51,5 @@ export const solidFramework: ReactiveFramework = {
   untracked(fn) {
     return untrack(fn);
   },
+  effectCleanup: true,
 };

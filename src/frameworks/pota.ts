@@ -5,6 +5,9 @@ import {
   effect,
   batch,
   root,
+  cleanup,
+  untrack,
+  // @ts-ignore — pota types incomplete in Node
 } from "pota";
 
 export const potaFramework: ReactiveFramework = {
@@ -17,12 +20,17 @@ export const potaFramework: ReactiveFramework = {
     return { read: memo(fn) };
   },
   effect(fn) {
-    effect(fn);
+    effect(() => {
+      const cl = fn();
+      if (typeof cl === "function") {
+        cleanup(cl);
+      }
+    });
     return () => {};
   },
   run(fn) {
     let result: any;
-    root((dispose) => {
+    root((dispose: () => void) => {
       result = fn();
     });
     return result;
@@ -30,4 +38,9 @@ export const potaFramework: ReactiveFramework = {
   batch(fn) {
     batch(fn);
   },
+  untracked(fn) {
+    return untrack(fn);
+  },
+  effectCleanup: true,
+  computedThrows: true,
 };

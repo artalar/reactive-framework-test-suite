@@ -1,4 +1,5 @@
 import type { ReactiveFramework } from "../framework.js";
+// @ts-ignore
 import * as $ from "svelte/internal/client";
 
 export const svelteFramework: ReactiveFramework = {
@@ -7,7 +8,10 @@ export const svelteFramework: ReactiveFramework = {
     const s = $.state(initialValue);
     return {
       read: () => $.get(s),
-      write: (v) => $.set(s, v),
+      write: (v) => {
+        $.set(s, v);
+        $.flush();
+      },
     };
   },
   computed(fn) {
@@ -15,8 +19,11 @@ export const svelteFramework: ReactiveFramework = {
     return { read: () => $.get(c) };
   },
   effect(fn) {
-    $.render_effect(fn);
-    return () => {};
+    let dispose!: () => void;
+    const destroy = $.effect_root(() => {
+      $.render_effect(fn);
+    });
+    return destroy;
   },
   run(fn) {
     let result: any;
@@ -26,4 +33,6 @@ export const svelteFramework: ReactiveFramework = {
     $.flush();
     return result;
   },
+  effectCleanup: true,
+  computedThrows: true,
 };

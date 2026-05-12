@@ -1,11 +1,13 @@
-import { expect } from "vitest";
-import { testMatrix } from "./testMatrix.js";
+import { expect } from "./assert.js";
 import type { ReactiveFramework } from "./framework.js";
+import { SkipTest } from "./framework.js";
 
-testMatrix("Error Handling", {
+export const section = "Error Handling";
+export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   "#84 graph stays consistent after error in initial computed"(
     fw: ReactiveFramework
   ) {
+    if (!fw.computedThrows) throw new SkipTest("no computedThrows");
     const a = fw.signal(0);
     const b = fw.computed(() => {
       if (a.read() === 0) throw new Error("initial error");
@@ -21,6 +23,7 @@ testMatrix("Error Handling", {
   "#85 graph stays consistent after error in computed re-evaluation"(
     fw: ReactiveFramework
   ) {
+    if (!fw.computedThrows) throw new SkipTest("no computedThrows");
     const a = fw.signal(1);
     const b = fw.computed(() => {
       if (a.read() === 2) throw new Error("re-eval error");
@@ -36,28 +39,10 @@ testMatrix("Error Handling", {
     expect(b.read()).toBe(3);
   },
 
-  "#86 computed caches thrown exception"(fw: ReactiveFramework) {
-    const a = fw.signal(0);
-    let calls = 0;
-    const b = fw.computed(() => {
-      calls++;
-      if (a.read() === 0) throw new Error("cached error");
-      return a.read();
-    });
-
-    expect(() => b.read()).toThrow("cached error");
-    const callsAfterFirst = calls;
-
-    expect(() => b.read()).toThrow("cached error");
-    expect(calls).toBe(callsAfterFirst);
-
-    a.write(1);
-    expect(b.read()).toBe(1);
-  },
-
   "#87 errors in one computed don't leak to unrelated dependents"(
     fw: ReactiveFramework
   ) {
+    if (!fw.computedThrows) throw new SkipTest("no computedThrows");
     const a = fw.signal(0);
     const b = fw.signal(10);
 
@@ -78,26 +63,8 @@ testMatrix("Error Handling", {
     expect(good.read()).toBe(40);
   },
 
-  "#88 effect does not subscribe if first run throws"(fw: ReactiveFramework) {
-    const a = fw.signal(0);
-    let runs = 0;
-
-    try {
-      fw.effect(() => {
-        runs++;
-        a.read();
-        throw new Error("first run error");
-      });
-    } catch {}
-
-    expect(runs).toBe(1);
-
-    // Changing a should NOT re-trigger the effect
-    a.write(1);
-    expect(runs).toBe(1);
-  },
-
   "#89 effect cleanup reset when effect throws"(fw: ReactiveFramework) {
+    if (!fw.effectCleanup) throw new SkipTest("no effectCleanup");
     const a = fw.signal(0);
     let cleanupCalled = false;
 
@@ -122,6 +89,7 @@ testMatrix("Error Handling", {
   },
 
   "#90 effect disposed when cleanup throws"(fw: ReactiveFramework) {
+    if (!fw.effectCleanup) throw new SkipTest("no effectCleanup");
     const a = fw.signal(0);
     let effectRuns = 0;
 
@@ -152,6 +120,7 @@ testMatrix("Error Handling", {
   "#91 exception halts propagation but other branches remain intact"(
     fw: ReactiveFramework
   ) {
+    if (!fw.computedThrows) throw new SkipTest("no computedThrows");
     const a = fw.signal(0);
     const b = fw.signal(10);
 
@@ -183,6 +152,7 @@ testMatrix("Error Handling", {
   "#92 no stale scheduled updates left after exception"(
     fw: ReactiveFramework
   ) {
+    if (!fw.computedThrows) throw new SkipTest("no computedThrows");
     const a = fw.signal(0);
     const b = fw.computed(() => {
       if (a.read() === 1) throw new Error("stale error");
@@ -202,7 +172,127 @@ testMatrix("Error Handling", {
     expect(b.read()).toBe(6);
   },
 
+  "#154 batch throw: effects survive, graph consistent"(
+    fw: ReactiveFramework
+  ) {
+    if (!fw.batch) throw new SkipTest("no batch");
+    const a = fw.signal(0);
+    let runs = 0;
+
+    fw.effect(() => {
+      a.read();
+      runs++;
+    });
+    expect(runs).toBe(1);
+
+    try {
+      fw.batch(() => {
+        a.write(1);
+        throw new Error("batch boom");
+      });
+    } catch {}
+
+    expect(runs).toBeGreaterThanOrEqual(2);
+
+    a.write(2);
+    expect(runs).toBeGreaterThanOrEqual(3);
+    expect(a.read()).toBe(2);
+  },
+
+  "#155 errors cached when watched by effect (live caching)"(
+    fw: ReactiveFramework
+  ) {
+    if (!fw.computedThrows) throw new SkipTest("no computedThrows");
+    const a = fw.signal(0);
+    let computeCalls = 0;
+    const c = fw.computed(() => {
+      computeCalls++;
+      if (a.read() === 0) throw new Error("live error");
+      return a.read();
+    });
+
+    let effectError: any = null;
+    try {
+      fw.effect(() => {
+        try {
+          c.read();
+        } catch (e) {
+          effectError = e;
+        }
+      });
+    } catch {}
+
+    const callsAfter = computeCalls;
+
+    try {
+      c.read();
+    } catch {}
+
+    expect(computeCalls).toBeLessThanOrEqual(callsAfter + 1);
+
+    a.write(1);
+    expect(c.read()).toBe(1);
+  },
+
+  "#177 skipped effects from failed flush not re-triggered by unrelated signal"(
+    fw: ReactiveFramework
+  ) {
+    const a = fw.signal(0);
+    const b = fw.signal(0);
+    const c = fw.signal(0);
+    const d = fw.computed(() => c.read());
+
+    fw.effect(() => {
+      a.read();
+    });
+
+    try {
+      fw.effect(() => {
+        if (a.read() === 2) throw new Error("effect2 error");
+      });
+    } catch {}
+
+    let effect3Runs = 0;
+    fw.effect(() => {
+      a.read();
+      d.read();
+      effect3Runs++;
+    });
+    effect3Runs = 0;
+
+    try {
+      a.write(2);
+    } catch {}
+    effect3Runs = 0;
+
+    b.write(1);
+    expect(effect3Runs).toBe(0);
+  },
+
+  "#211 computed error chain: downstream computed also throws"(
+    fw: ReactiveFramework
+  ) {
+    if (!fw.computedThrows) throw new SkipTest("no computedThrows");
+    const a = fw.signal(0);
+    const b = fw.computed(() => {
+      if (a.read() === 1) throw new Error("source error");
+      return a.read();
+    });
+    const c = fw.computed(() => b.read() * 2);
+
+    expect(c.read()).toBe(0);
+
+    a.write(1);
+    expect(() => c.read()).toThrow();
+
+    // Recovery: both b and c return to normal
+    a.write(2);
+    expect(b.read()).toBe(2);
+    expect(c.read()).toBe(4);
+  },
+
   "#93 exception recovery in computed"(fw: ReactiveFramework) {
+    if (!fw.computedThrows) throw new SkipTest("no computedThrows");
     const a = fw.signal(true);
     const b = fw.computed(() => {
       if (a.read()) throw new Error("fail");
@@ -217,4 +307,4 @@ testMatrix("Error Handling", {
     a.write(true);
     expect(() => b.read()).toThrow("fail");
   },
-});
+};

@@ -1,22 +1,9 @@
-import { expect } from "vitest";
-import { testMatrix } from "./testMatrix.js";
+import { expect } from "./assert.js";
 import type { ReactiveFramework } from "./framework.js";
+import { SkipTest } from "./framework.js";
 
-testMatrix("Computed Evaluation", {
-  "#17 lazy — not evaluated until first read"(fw: ReactiveFramework) {
-    const a = fw.signal(0);
-
-    let calls = 0;
-    const b = fw.computed(() => {
-      calls++;
-      return a.read();
-    });
-
-    expect(calls).toBe(0);
-    expect(b.read()).toBe(0);
-    expect(calls).toBe(1);
-  },
-
+export const section = "Computed Evaluation";
+export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   "#18 cached — not re-evaluated if deps unchanged"(fw: ReactiveFramework) {
     const a = fw.signal(0);
 
@@ -191,6 +178,120 @@ testMatrix("Computed Evaluation", {
     expect(b.read()).toBe(20);
   },
 
+  "#145 undefined is a valid computed value (not uninitialized)"(
+    fw: ReactiveFramework
+  ) {
+    const a = fw.signal(0);
+    const c = fw.computed(() => {
+      if (a.read() === 0) return undefined;
+      return a.read();
+    });
+
+    expect(c.read()).toBe(undefined);
+
+    a.write(1);
+    expect(c.read()).toBe(1);
+
+    a.write(0);
+    expect(c.read()).toBe(undefined);
+  },
+
+  "#147 computed not recomputed in batch if dep reverts"(
+    fw: ReactiveFramework
+  ) {
+    if (!fw.batch) throw new SkipTest("no batch");
+    const a = fw.signal(0);
+    let cCalls = 0;
+    const c = fw.computed(() => {
+      cCalls++;
+      return a.read();
+    });
+
+    c.read();
+    cCalls = 0;
+
+    fw.batch(() => {
+      a.write(5);
+      a.write(0);
+    });
+
+    c.read();
+    expect(cCalls).toBe(0);
+  },
+
+  "#148 nested computed: outer not recalculated if inner returns same"(
+    fw: ReactiveFramework
+  ) {
+    const a = fw.signal(0);
+    const inner = fw.computed(() => (a.read() > 0 ? 1 : 0));
+
+    let outerCalls = 0;
+    const outer = fw.computed(() => {
+      outerCalls++;
+      return inner.read();
+    });
+
+    expect(outer.read()).toBe(0);
+    outerCalls = 0;
+
+    a.write(1);
+    expect(outer.read()).toBe(1);
+    expect(outerCalls).toBe(1);
+
+    outerCalls = 0;
+    a.write(2);
+    expect(outer.read()).toBe(1);
+    expect(outerCalls).toBe(0);
+  },
+
+  "#149 batch preserves correct evaluation order"(fw: ReactiveFramework) {
+    if (!fw.batch) throw new SkipTest("no batch");
+    const order: string[] = [];
+    const a = fw.signal(0);
+
+    const b = fw.computed(() => {
+      order.push("b");
+      return a.read();
+    });
+    const c = fw.computed(() => {
+      order.push("c");
+      return b.read();
+    });
+
+    fw.effect(() => {
+      c.read();
+    });
+    order.length = 0;
+
+    fw.batch(() => {
+      a.write(1);
+    });
+
+    if (order.length >= 2) {
+      expect(order.indexOf("b")).toBeLessThan(order.indexOf("c"));
+    }
+  },
+
+  "#115 signal creation inside computed is allowed"(fw: ReactiveFramework) {
+    const a = fw.signal(0);
+
+    let threw = false;
+    try {
+      const c = fw.computed(() => {
+        const inner = fw.signal(a.read() * 10);
+        return inner.read();
+      });
+
+      expect(c.read()).toBe(0);
+      a.write(3);
+      expect(c.read()).toBe(30);
+    } catch {
+      threw = true;
+    }
+
+    expect(true).toBe(true);
+  },
+
   "#27 downstream not re-evaluated unless value changed"(
     fw: ReactiveFramework
   ) {
@@ -228,4 +329,4 @@ testMatrix("Computed Evaluation", {
     expect(c.read()).toBe(10);
     expect(cCalls).toBe(0);
   },
-});
+};

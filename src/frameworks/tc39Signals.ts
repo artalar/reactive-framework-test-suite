@@ -26,7 +26,10 @@ export const tc39SignalsFramework: ReactiveFramework = {
     const s = new Signal.State(initialValue);
     return {
       read: () => s.get(),
-      write: (v) => s.set(v),
+      write: (v) => {
+        s.set(v);
+        processPending();
+      },
     };
   },
   computed(fn) {
@@ -34,10 +37,17 @@ export const tc39SignalsFramework: ReactiveFramework = {
     return { read: () => c.get() };
   },
   effect(fn) {
-    const c = new Signal.Computed(() => fn());
+    let cleanup: (() => void) | void;
+    const c = new Signal.Computed(() => {
+      if (typeof cleanup === "function") cleanup();
+      cleanup = fn() as (() => void) | void;
+    });
     w.watch(c);
     c.get();
-    return () => w.unwatch(c);
+    return () => {
+      w.unwatch(c);
+      if (typeof cleanup === "function") cleanup();
+    };
   },
   run(fn) {
     return fn();
@@ -45,15 +55,6 @@ export const tc39SignalsFramework: ReactiveFramework = {
   untracked(fn) {
     return Signal.subtle.untrack(fn);
   },
-  signalWithEquals(initialValue, equals) {
-    const s = new Signal.State(initialValue, { equals });
-    return {
-      read: () => s.get(),
-      write: (v) => s.set(v),
-    };
-  },
-  computedWithEquals(fn, equals) {
-    const c = new Signal.Computed(fn, { equals });
-    return { read: () => c.get() };
-  },
+  effectCleanup: true,
+  computedThrows: true,
 };

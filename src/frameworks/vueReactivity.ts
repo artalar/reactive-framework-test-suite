@@ -1,12 +1,15 @@
 import type { ReactiveFramework } from "../framework.js";
+// @ts-ignore — import from dist to access unexported startBatch/endBatch
 import {
   ref,
   computed,
   ReactiveEffect,
-  effectScope,
   pauseTracking,
   resetTracking,
-} from "@vue/reactivity";
+  onEffectCleanup,
+  startBatch,
+  endBatch,
+} from "@vue/reactivity/dist/reactivity.esm-bundler.js";
 
 export const vueReactivityFramework: ReactiveFramework = {
   name: "@vue/reactivity",
@@ -24,7 +27,12 @@ export const vueReactivityFramework: ReactiveFramework = {
     return { read: () => c.value };
   },
   effect(fn) {
-    const e = new ReactiveEffect(fn);
+    const e = new ReactiveEffect(() => {
+      const cleanup = fn();
+      if (typeof cleanup === "function") {
+        onEffectCleanup(cleanup);
+      }
+    });
     e.run();
     return () => e.stop();
   },
@@ -39,9 +47,14 @@ export const vueReactivityFramework: ReactiveFramework = {
       resetTracking();
     }
   },
-  effectScope(fn) {
-    const scope = effectScope();
-    scope.run(fn);
-    return () => scope.stop();
+  batch(fn) {
+    startBatch();
+    try {
+      fn();
+    } finally {
+      endBatch();
+    }
   },
+  effectCleanup: true,
+  computedThrows: true,
 };

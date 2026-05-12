@@ -15,8 +15,17 @@ export const sjsFramework: ReactiveFramework = {
     return { read: () => c() };
   },
   effect(fn) {
-    S(fn);
-    return () => {};
+    let dispose!: () => void;
+    S.root((d: () => void) => {
+      dispose = d;
+      S(() => {
+        const cleanup = fn();
+        if (typeof cleanup === "function") {
+          S.cleanup(cleanup);
+        }
+      });
+    });
+    return dispose;
   },
   run(fn) {
     let result: any;
@@ -31,13 +40,5 @@ export const sjsFramework: ReactiveFramework = {
   untracked(fn) {
     return S.sample(fn);
   },
-  signalWithEquals(initialValue, equals) {
-    const s = S.data(initialValue, (a: typeof initialValue, b: typeof initialValue) =>
-      equals(a, b)
-    );
-    return {
-      read: () => s(),
-      write: (v) => s(v),
-    };
-  },
+  effectCleanup: true,
 };

@@ -6,7 +6,10 @@ import {
   effectScope,
   startBatch,
   endBatch,
-} from "alien-signals";
+  setActiveSub,
+  // @ts-ignore — local dev path
+} from "/Users/johnsonchu/Desktop/GitHub/alien-signals/esm/index.mjs";
+// effectScope is still imported for run() but removed from framework interface
 
 export const alienSignalsFramework: ReactiveFramework = {
   name: "alien-signals",
@@ -36,7 +39,14 @@ export const alienSignalsFramework: ReactiveFramework = {
       endBatch();
     }
   },
-  effectScope(fn) {
-    return effectScope(fn) as unknown as () => void;
+  untracked(fn) {
+    const prev = setActiveSub(undefined);
+    try {
+      return fn();
+    } finally {
+      setActiveSub(prev);
+    }
   },
+  effectCleanup: true,
+  computedThrows: true,
 };

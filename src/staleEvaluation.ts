@@ -1,8 +1,8 @@
-import { expect } from "vitest";
-import { testMatrix } from "./testMatrix.js";
+import { expect } from "./assert.js";
 import type { ReactiveFramework } from "./framework.js";
 
-testMatrix("Stale Evaluation Order", {
+export const section = "Stale Evaluation Order";
+export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   "#94 stale invocation does not trigger pending computations"(
     fw: ReactiveFramework
   ) {
@@ -69,6 +69,38 @@ testMatrix("Stale Evaluation Order", {
     expect(d.read()).toBe("c");
   },
 
+  "#158 stale chained computed accessed after update: values fresh"(
+    fw: ReactiveFramework
+  ) {
+    const a = fw.signal(0);
+    const b = fw.computed(() => a.read() + 1);
+    const c = fw.computed(() => b.read() + 1);
+    const d = fw.computed(() => c.read() + 1);
+
+    expect(d.read()).toBe(3);
+
+    a.write(10);
+
+    expect(b.read()).toBe(11);
+    expect(c.read()).toBe(12);
+    expect(d.read()).toBe(13);
+  },
+
+  "#159 pending computation created after dirty signal still updates"(
+    fw: ReactiveFramework
+  ) {
+    const a = fw.signal(0);
+    const b = fw.computed(() => a.read() * 2);
+
+    a.write(5);
+
+    const c = fw.computed(() => b.read() + 1);
+    expect(c.read()).toBe(11);
+
+    a.write(10);
+    expect(c.read()).toBe(21);
+  },
+
   "#97 flags indirectly updated during dirty-checking"(
     fw: ReactiveFramework
   ) {
@@ -85,4 +117,4 @@ testMatrix("Stale Evaluation Order", {
     // a=1, b=1, c=1, d=1+1=2
     expect(d.read()).toBe(2);
   },
-});
+};

@@ -6,15 +6,13 @@ export interface ReactiveFramework {
   run<T>(fn: () => T): T;
   batch?(fn: () => void): void;
   untracked?<T>(fn: () => T): T;
-  effectScope?(fn: () => void): () => void;
-  signalWithEquals?<T>(
-    initialValue: T,
-    equals: (a: T, b: T) => boolean
-  ): Signal<T>;
-  computedWithEquals?<T>(
-    fn: () => T,
-    equals: (a: T, b: T) => boolean
-  ): Computed<T>;
+
+
+  effectCleanup?: boolean;
+  /** Errors thrown inside computed propagate via .read() (lazy frameworks). Eager frameworks throw at creation time. */
+  computedThrows?: boolean;
+  /** Called after each test to recover from corrupted global state (e.g. throw during stabilize) */
+  afterEach?(): void;
 }
 
 export interface Signal<T> {
@@ -26,6 +24,8 @@ export interface Computed<T> {
   read(): T;
 }
 
-export class SkipTest {
-  constructor(public reason: string) {}
+export class SkipTest extends Error {
+  constructor(public reason: string) {
+    super(reason);
+  }
 }

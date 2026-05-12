@@ -1,9 +1,9 @@
-import { expect } from "vitest";
-import { testMatrix } from "./testMatrix.js";
+import { expect } from "./assert.js";
 import type { ReactiveFramework } from "./framework.js";
 import { SkipTest } from "./framework.js";
 
-testMatrix("Memory & GC", {
+export const section = "Memory & GC";
+export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   "#98 subscriptions cleared when all subscribers removed"(
     fw: ReactiveFramework
   ) {
@@ -50,28 +50,59 @@ testMatrix("Memory & GC", {
     expect(a.read()).toBe(5);
   },
 
-  "#100 scope dereferences child after stopping (no leak)"(
+  "#160 consumer links cleaned after losing all listeners"(
     fw: ReactiveFramework
   ) {
-    if (!fw.effectScope) throw new SkipTest("no effectScope");
     const a = fw.signal(0);
-    let effectRan = false;
+    const b = fw.computed(() => a.read() * 2);
+    let runs = 0;
 
-    const stop = fw.effectScope(() => {
-      fw.effect(() => {
-        a.read();
-        effectRan = true;
-      });
+    const dispose1 = fw.effect(() => {
+      b.read();
+      runs++;
+    });
+    const dispose2 = fw.effect(() => {
+      b.read();
     });
 
-    expect(effectRan).toBe(true);
-    effectRan = false;
+    expect(runs).toBe(1);
 
-    stop();
-
-    // After stop, updating signal should not trigger the effect
     a.write(1);
-    expect(effectRan).toBe(false);
+    expect(runs).toBe(2);
+
+    dispose1();
+    dispose2();
+
+    a.write(2);
+    expect(runs).toBe(2);
+
+    expect(b.read()).toBe(4);
+  },
+
+  "#161 multi-level computed cleanup after all listeners removed"(
+    fw: ReactiveFramework
+  ) {
+    const a = fw.signal(0);
+    const b = fw.computed(() => a.read() + 1);
+    const c = fw.computed(() => b.read() + 1);
+    const d = fw.computed(() => c.read() + 1);
+    let runs = 0;
+
+    const dispose = fw.effect(() => {
+      d.read();
+      runs++;
+    });
+    expect(runs).toBe(1);
+
+    a.write(1);
+    expect(runs).toBe(2);
+
+    dispose();
+
+    a.write(2);
+    expect(runs).toBe(2);
+
+    expect(d.read()).toBe(5);
   },
 
   "#101 disposed effect graph links fully cleaned up"(
@@ -96,4 +127,4 @@ testMatrix("Memory & GC", {
     // Verify the computed still works independently
     expect(b.read()).toBe(4);
   },
-});
+};

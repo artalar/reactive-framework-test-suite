@@ -8,6 +8,8 @@ Libraries: **alien** (alien-signals), **preact** (@preact/signals-core), **vue**
 **solid** (solid-js), **polyfill** (signal-polyfill/TC39), **angular** (@angular/core),
 **tansu** (@amadeus-it-group/tansu), **mobx**, **svelte**, **S** (S.js), **reactively** (@reactively/core)
 
+**178 unique test cases** across 14 categories.
+
 ---
 
 ## 1. Graph Propagation
@@ -27,6 +29,8 @@ Tests that updates propagate correctly through the dependency graph without glit
 | 9 | Convergence: propagate once despite multiple paths (linear) | solid, polyfill, S |
 | 10 | Convergence: propagate once despite multiple paths (exponential) | solid, polyfill, S |
 | 11 | Computed chain depth: A→B→C→D propagates correctly | alien, vue |
+| 116 | Other listeners still notified after one listener disposes | preact |
+| 157 | Three-way diamond: sub updates when two of three deps unmark | preact |
 
 ---
 
@@ -41,6 +45,8 @@ Tests that the system correctly adds/removes dependencies when computation code 
 | 14 | New deps are updated before the dependee reads them | solid, polyfill, S |
 | 15 | Only subscribes to signals actually read (not just reachable) | alien, preact |
 | 16 | Lazy branch: unaccessed computed in branch is not evaluated | alien, preact, polyfill |
+| 165 | Computed dep cleanup doesn't delete sibling subscription | vue |
+| 166 | After dep removed via branch switch, re-subscribing works | vue |
 
 ---
 
@@ -61,6 +67,13 @@ Tests computed laziness, caching, re-evaluation, and ordering.
 | 25 | No re-compute if computed has zero dependencies | angular |
 | 26 | Computed remains live after losing all subscribers (no premature GC) | vue |
 | 27 | Downstream computations not re-evaluated unless value actually changed | solid, polyfill |
+| 115 | Signal creation inside computed is allowed and works correctly | angular |
+| 145 | Undefined is a valid computed value (not uninitialized) | preact |
+| 146 | Multiple dep changes before read = single recompute | preact |
+| 147 | Computed not recomputed in batch if dep reverts | tansu |
+| 148 | Nested computed: outer not recalculated if inner returns same | preact, angular |
+| 149 | Batch preserves correct evaluation order | tansu |
+| 167 | Computed returning NaN: downstream not re-evaluated (Object.is) | polyfill |
 
 ---
 
@@ -77,6 +90,11 @@ Tests that identical-value writes are correctly skipped.
 | 32 | Computed: same result → no downstream propagation | alien, preact, vue, polyfill |
 | 33 | Computed: custom equality comparator | angular, polyfill, tansu |
 | 34 | Pruning: re-evaluation stops at first node returning equal value | polyfill |
+| 102 | Custom equals() reads don't leak tracking to outer context | polyfill, angular |
+| 103 | Custom equals forces propagation even with same reference (always-false) | angular, reactively |
+| 162 | Custom equals not invoked on first computation (no previous value) | angular, polyfill |
+| 168 | signalWithEquals preserves old value when write rejected | polyfill |
+| 169 | Live pruning: effect not re-run when intermediate computed returns same | polyfill |
 
 ---
 
@@ -94,6 +112,15 @@ Tests effect execution, cleanup, and disposal.
 | 40 | Effect cleanup runs outside reactive evaluation context | preact |
 | 41 | Disposed effect never re-notified on later updates | alien, preact |
 | 42 | Effect not executed if disposed during pending batch | preact |
+| 108 | Effect self-dispose during execution is safe | preact, mobx |
+| 109 | Only the most recent cleanup function runs (old cleanups forgotten) | preact, angular |
+| 110 | Double-dispose is safe (no throw, no side effects) | preact, svelte |
+| 111 | Cleanup-triggered dispose prevents effect re-run | preact |
+| 140 | Cleanup called when effect self-disposes during execution | preact |
+| 141 | Dispose during execution then continue reading: no re-run | preact, mobx |
+| 142 | One-shot conditional effect (auto-dispose when condition met) | mobx |
+| 143 | Destroyed effect not re-scheduled on later updates from multiple deps | preact |
+| 144 | Cleanup on destroy is idempotent (second dispose no-op) | preact, angular |
 
 ---
 
@@ -109,6 +136,10 @@ Tests behavior of effects created inside other effects.
 | 46 | Duplicate subscribers don't affect notification order | alien |
 | 47 | Effect recursion handled on first execution | alien |
 | 48 | Nested effects depend on state of outer effects | svelte |
+| 163 | Parent effect not triggered by child's own signal | preact, mobx |
+| 164 | Inner effect created inside outer tracks own deps independently | preact, mobx |
+| 170 | Inner effect not triggered when computed dep resolves unchanged | alien |
+| 171 | Effect notification order consistent across nesting contexts | alien |
 
 ---
 
@@ -127,6 +158,20 @@ Tests behavior when effect/computed writes back to a source signal.
 | 55 | Effect re-scheduled when writing signal before reading | svelte |
 | 56 | Effect re-scheduled when writing signal after reading from derived | svelte |
 | 57 | Computed side effect should be able to trigger | vue |
+| 112 | Computed side-effect doesn't affect sibling computeds reading same signal | polyfill |
+| 113 | Inner write convergence: effect writes toward target, settles | preact, tansu, mobx |
+| 114 | Inner write: final value unchanged → no downstream notification | preact, tansu |
+| 133 | Listener writes back: second listener skipped if no net change | tansu |
+| 134 | Listener writes back: second listener gets final value | tansu |
+| 135 | Chained computed inner write: downstream only sees settled value | tansu |
+| 136 | Computed inner write unchanged → no downstream notification | tansu |
+| 137 | Computed inner write changed → downstream notified | tansu |
+| 138 | Independent computeds sharing source, one inner-writes: other sees final | tansu |
+| 139 | Effect inner write re-schedules when dep changes during run | preact |
+| 172 | Computed writing to own dep: never caches (recomputes each read) | preact |
+| 173 | Mid-propagation read isolation: sibling sees pre-write value | S |
+| 174 | Intra-run isolation: read after write returns pre-write value | S |
+| 175 | Effect body writes multiple signals: downstream runs once | mobx |
 
 ---
 
@@ -143,6 +188,10 @@ Tests that circular or infinite update loops are caught.
 | 62 | Infinite loop from continually setting a dependency | solid, S, mobx |
 | 63 | Cycle from modifying a branch (dynamic cycle creation) | solid, S |
 | 64 | Max iteration limit reached → error | tansu, mobx |
+| 150 | Dynamic cycle: computed pair becomes cyclic on condition change | mobx |
+| 151 | Self-reference via untracked: cycle still detected | polyfill |
+| 152 | Conditional computed becomes recursive on flag change | tansu, mobx |
+| 153 | Computed self-dep recovery after catching cycle error | preact |
 
 ---
 
@@ -162,6 +211,21 @@ Tests grouping multiple updates into one propagation pass.
 | 72 | Intermediate values skipped (only final value observed) | tansu |
 | 73 | Back-and-forth write: value returns to original → no notification | tansu |
 | 74 | Multiple signals grouped in single update | solid |
+| 119 | Batch: computed returns same result despite source changes → no effect run | tansu, polyfill |
+| 120 | Cleanup writes inside effect are implicitly batched | preact |
+| 121 | Pending effects run even if some effects throw during batch propagation | preact, tansu |
+| 122 | Post-batch writes work normally | preact |
+| 123 | Repeated no-op batches don't re-trigger effects | tansu |
+| 124 | Trigger+dispose+retrigger in batch = no run | preact |
+| 125 | Batch: source reverts → computed not notified | tansu |
+| 126 | New effect inside batch after write sees updated value | preact |
+| 127 | Unsubscribe inside batch: not called at batch end | tansu |
+| 128 | Reading computed in batch forces upstream evaluation | tansu |
+| 129 | Reading one computed doesn't notify sibling effect early | tansu |
+| 130 | Effect inner writes are implicitly batched | preact, mobx |
+| 131 | Derived-of-derived: source reverts in batch, only changed dep triggers | tansu |
+| 132 | Batch: computed not recomputed if dep reverts | tansu |
+| 176 | Batch returns callback return value | preact |
 
 ---
 
@@ -174,6 +238,9 @@ Tests reading a signal without establishing a dependency.
 | 75 | Untracked read in effect does not create dependency | preact, alien, S, polyfill, solid, angular |
 | 76 | Untracked read in computed does not create dependency | preact, alien |
 | 77 | Nested untracked-inside-effect still blocks tracking | preact |
+| 117 | Untracked read of stale computed still returns fresh value | preact, polyfill, vue |
+| 118 | Untracked transitively doesn't track through peeked computed's deps | preact, polyfill, vue |
+| 156 | Untracked write inside effect doesn't throw | preact, vue, mobx |
 
 ---
 
@@ -189,6 +256,7 @@ Tests scope-based lifecycle management of reactive subscriptions.
 | 81 | Parent update disposes old child computations | S |
 | 82 | Owned deriveds cleanup when disconnected from graph | svelte |
 | 83 | Inner scope signal updates tracked by outer effect | alien |
+| 178 | Parent disposes and recreates child: downstream sees correct value | S |
 
 ---
 
@@ -208,6 +276,13 @@ Tests exception behavior within the reactive graph.
 | 91 | Exception halts propagation but non-excepted branches remain intact | S |
 | 92 | No stale scheduled updates left after exception | S |
 | 93 | Exception recovery in computed (re-evaluates after dep change) | mobx |
+| 104 | Exception thrown by custom equals() is cached | polyfill, angular |
+| 105 | Recovery from exception in equals() | angular, tansu |
+| 106 | Multiple effects: one throws, others continue unaffected | preact, mobx |
+| 107 | Non-Error thrown value cached by computed | preact, polyfill |
+| 154 | Batch/transaction throw: effects survive, graph consistent | preact, mobx |
+| 155 | Errors cached when watched by effect (live caching) | polyfill, angular |
+| 177 | Skipped effects from failed flush not re-triggered by unrelated signal | alien |
 
 ---
 
@@ -221,6 +296,8 @@ Tests correct handling of stale (already-invalidated) computations during propag
 | 95 | Stale computations evaluated before their dependees | solid, polyfill |
 | 96 | Downstream correctly marked stale on dep change | solid, polyfill |
 | 97 | Flags indirectly updated during dirty-checking | alien |
+| 158 | Stale chained computed accessed after update: values remain fresh | polyfill |
+| 159 | Pending computation created after dirty signal still updates | polyfill |
 
 ---
 
@@ -234,44 +311,30 @@ Tests that the reactive system doesn't leak memory.
 | 99 | Computed collectable by GC if nothing listening | preact, vue |
 | 100 | Scope dereferences child after stopping (no leak) | vue |
 | 101 | Disposed effect's graph links fully cleaned up | alien |
+| 160 | Consumer links cleaned after losing all listeners | tansu |
+| 161 | Multi-level computed cleanup after all listeners removed | tansu |
 
 ---
 
 ## Summary
 
-**101 unique test cases** across 14 categories, deduplicated from ~1500+ raw tests across 10 libraries.
+**178 unique test cases** across 14 categories, deduplicated from ~1500+ raw tests across 10 libraries.
 
 ### Coverage by Category
 
 | Category | Test Cases | Libraries (3+) |
 |----------|-----------|----------------|
-| Graph Propagation | 11 | 8 libs test diamond |
-| Dynamic Dependencies | 5 | 5 libs |
-| Computed Evaluation | 11 | 5 libs |
-| Equality | 7 | 7 libs |
-| Effect Lifecycle | 8 | 5 libs |
-| Nested Effects | 6 | 3 libs |
-| Inner Write | 9 | 7 libs |
-| Cycle Detection | 7 | 7 libs |
-| Batching | 10 | 5 libs |
-| Untracked | 3 | 6 libs |
-| Effect Scope | 6 | 4 libs |
-| Error Handling | 10 | 5 libs |
-| Stale Evaluation | 4 | 3 libs |
-| Memory & GC | 4 | 3 libs |
-
-### Coverage Heat Map (test cases per library)
-
-| Library | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | Total |
-|---------|---|---|---|---|---|---|---|---|---|----|----|----|----|-----|-------|
-| alien | 6 | 2 | - | 1 | 2 | 5 | 1 | - | - | 2 | 2 | 2 | 1 | 2 | 26 |
-| preact | 6 | 1 | 5 | 2 | 5 | - | 1 | 4 | 5 | 2 | - | 7 | - | 1 | 39 |
-| vue | 2 | 1 | 9 | 2 | 2 | - | 1 | 1 | 1 | 1 | 2 | - | - | 2 | 24 |
-| solid | 4 | 3 | - | - | 1 | - | - | 2 | 1 | 1 | - | - | 2 | - | 14 |
-| polyfill | 7 | 2 | 2 | 2 | - | - | 1 | 2 | - | 1 | - | 2 | 2 | - | 21 |
-| angular | 1 | - | 3 | 3 | 2 | - | 1 | 2 | - | 1 | - | 1 | - | - | 14 |
-| tansu | 1 | - | - | 2 | - | - | 1 | 2 | 5 | - | - | - | - | - | 11 |
-| mobx | - | - | - | 1 | - | - | - | 2 | - | - | - | 1 | - | - | 4 |
-| svelte | - | - | - | - | - | 2 | 2 | - | - | - | 1 | - | - | - | 5 |
-| S | 3 | 3 | - | 1 | 1 | - | 2 | 2 | 1 | 1 | 1 | 2 | - | - | 17 |
-| reactively | - | 1 | - | 1 | - | - | 1 | - | - | - | - | - | - | - | 3 |
+| Graph Propagation | 13 | 8 libs test diamond |
+| Dynamic Dependencies | 7 | 6 libs |
+| Computed Evaluation | 18 | 5 libs |
+| Equality | 12 | 7 libs |
+| Effect Lifecycle | 17 | 5 libs |
+| Nested Effects | 10 | 4 libs |
+| Inner Write | 23 | 8 libs |
+| Cycle Detection | 11 | 7 libs |
+| Batching | 25 | 5 libs |
+| Untracked | 6 | 6 libs |
+| Effect Scope | 7 | 5 libs |
+| Error Handling | 17 | 6 libs |
+| Stale Evaluation | 6 | 3 libs |
+| Memory & GC | 6 | 3 libs |
