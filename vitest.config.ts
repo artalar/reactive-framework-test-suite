@@ -4,4 +4,9 @@ export default defineConfig({
   resolve: {
     conditions: ["browser", "development"],
   },
+  ssr: {
+    resolve: {
+      conditions: ["browser", "development"],
+    },
+  },
 });

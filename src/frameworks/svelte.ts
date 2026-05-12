@@ -22,7 +22,7 @@ export const svelteFramework: ReactiveFramework = {
     const destroy = $.effect_root(() => {
       result = fn();
     });
-    $.flush_sync();
+    $.flush();
     return result;
   },
 };
