@@ -1,6 +1,29 @@
 {
   "name": "reactive-framework-test-suite",
+  "version": "0.1.0",
   "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src/index.ts",
+    "src/assert.ts",
+    "src/framework.ts",
+    "src/graphPropagation.ts",
+    "src/dynamicDeps.ts",
+    "src/computedEval.ts",
+    "src/equality.ts",
+    "src/effectLifecycle.ts",
+    "src/nestedEffects.ts",
+    "src/innerWrite.ts",
+    "src/cycleDetection.ts",
+    "src/batching.ts",
+    "src/untracked.ts",
+    "src/errorHandling.ts",
+    "src/staleEvaluation.ts",
+    "src/memoryGc.ts",
+    "src/behaviorDifferences.ts"
+  ],
   "scripts": {
     "test": "vitest run; node scripts/update-readme.mjs"
   },
