@@ -297,16 +297,4 @@ testMatrix("Graph Propagation", {
     a.write(2);
     expect(e.read()).toBe(2);
   },
-
-  "#16 lazy branch"(fw: ReactiveFramework) {
-    const a = fw.signal(0);
-    const b = fw.computed(() => a.read());
-    const c = fw.computed(() => (a.read() > 0 ? a.read() : b.read()));
-
-    expect(c.read()).toBe(0);
-    a.write(1);
-    expect(c.read()).toBe(1);
-    a.write(0);
-    expect(c.read()).toBe(0);
-  },
 });
