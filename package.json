@@ -1,6 +1,5 @@
 {
   "name": "reactive-framework-test-suite",
-  "private": true,
   "type": "module",
   "scripts": {
     "test": "vitest run; node scripts/update-readme.mjs"
