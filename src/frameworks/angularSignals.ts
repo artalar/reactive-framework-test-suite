@@ -1,0 +1,23 @@
+import type { ReactiveFramework } from "../framework.js";
+import { signal, computed, effect } from "@angular/core";
+
+export const angularSignalsFramework: ReactiveFramework = {
+  name: "@angular/core",
+  signal(initialValue) {
+    const s = signal(initialValue);
+    return {
+      read: () => s(),
+      write: (v) => s.set(v),
+    };
+  },
+  computed(fn) {
+    const c = computed(fn);
+    return { read: () => c() };
+  },
+  effect(fn) {
+    effect(fn);
+  },
+  run(fn) {
+    return fn();
+  },
+};
