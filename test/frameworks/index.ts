@@ -1,4 +1,4 @@
-import type { ReactiveFramework } from "../framework.js";
+import type { ReactiveFramework } from "../../src/framework.js";
 
 import { alienSignalsFramework } from "./alienSignals.js";
 import { preactSignalsFramework } from "./preactSignals.js";

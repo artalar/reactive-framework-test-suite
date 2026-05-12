@@ -1,4 +1,4 @@
-import type { ReactiveFramework } from "../framework.js";
+import type { ReactiveFramework } from "../../src/framework.js";
 // @ts-ignore — import from dist to access unexported startBatch/endBatch
 import {
   ref,

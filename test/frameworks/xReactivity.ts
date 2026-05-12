@@ -1,4 +1,4 @@
-import type { ReactiveFramework } from "../framework.js";
+import type { ReactiveFramework } from "../../src/framework.js";
 import {
   createSignal,
   createMemo,

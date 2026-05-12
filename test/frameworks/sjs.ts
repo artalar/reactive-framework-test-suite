@@ -1,4 +1,4 @@
-import type { ReactiveFramework } from "../framework.js";
+import type { ReactiveFramework } from "../../src/framework.js";
 import S from "s-js";
 
 export const sjsFramework: ReactiveFramework = {

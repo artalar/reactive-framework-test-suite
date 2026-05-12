@@ -1,4 +1,4 @@
-import type { ReactiveFramework } from "../framework.js";
+import type { ReactiveFramework } from "../../src/framework.js";
 // Must import from dist/solid.cjs to get the client reactive runtime.
 // The default "solid-js" resolves to server build under Node condition,
 // which lacks the reactive runtime.

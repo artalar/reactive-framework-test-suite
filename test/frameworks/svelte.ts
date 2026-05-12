@@ -1,4 +1,4 @@
-import type { ReactiveFramework } from "../framework.js";
+import type { ReactiveFramework } from "../../src/framework.js";
 // @ts-ignore
 import * as $ from "svelte/internal/client";
 

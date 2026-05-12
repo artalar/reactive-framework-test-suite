@@ -2,8 +2,8 @@ import { describe, test, afterAll } from "vitest";
 import { mkdirSync, writeFileSync } from "fs";
 import { join } from "path";
 import { frameworks } from "./frameworks/index.js";
-import { SkipTest } from "./framework.js";
-import { testSuite } from "./index.js";
+import { SkipTest } from "../src/framework.js";
+import { testSuite } from "../src/index.js";
 
 const resultDir = join(import.meta.dirname, "..", ".test-results");
 

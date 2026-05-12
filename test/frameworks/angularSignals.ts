@@ -1,4 +1,4 @@
-import type { ReactiveFramework } from "../framework.js";
+import type { ReactiveFramework } from "../../src/framework.js";
 import { signal, computed, untracked } from "@angular/core";
 import { createWatch, type Watch } from "@angular/core/primitives/signals";
 
