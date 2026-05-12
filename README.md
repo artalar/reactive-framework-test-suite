@@ -29,7 +29,7 @@ The **Behavioral Differences** section is separate — those tests reflect desig
 | S.js | `s-js` | 0.4.9 | 2018-07-28 |
 | @angular/core | `@angular/core` | 20.3.20 | 2026-05-06 |
 | anod | `anod` | 0.9.1 | 2026-04-27 |
-| r3 | `r3` | 0.0.1 | github |
+| r3 | `github:milomg/r3` | 0.0.1 | github |
 
 ## Summary
 

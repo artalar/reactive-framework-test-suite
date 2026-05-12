@@ -237,7 +237,7 @@ const fwPackages = {
   pota: "pota",
   "@angular/core": "@angular/core",
   anod: "anod",
-  r3: "r3",
+  r3: "github:milomg/r3",
 };
 
 function getPkgVersion(pkg) {
@@ -278,8 +278,9 @@ function getPkgDate(pkg, ver) {
 
 for (const fw of fwNames) {
   const pkg = fwPackages[fw] || fw;
-  const ver = getPkgVersion(pkg);
-  const date = getPkgDate(pkg, ver);
+  const moduleName = pkg.startsWith("github:") ? pkg.split("/").pop() : pkg;
+  const ver = getPkgVersion(moduleName);
+  const date = getPkgDate(moduleName, ver);
   readme += `| ${fw} | \`${pkg}\` | ${ver} | ${date} |\n`;
 }
 
