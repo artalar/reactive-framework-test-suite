@@ -252,7 +252,18 @@ function getPkgVersion(pkg) {
   return "?";
 }
 
+function isGitInstall(pkg) {
+  try {
+    const lock = JSON.parse(readFileSync(join(root, "package-lock.json"), "utf-8"));
+    const entry = lock.packages?.["node_modules/" + pkg];
+    return entry?.resolved?.startsWith("git+") ?? false;
+  } catch {
+    return false;
+  }
+}
+
 function getPkgDate(pkg, ver) {
+  if (isGitInstall(pkg)) return "github";
   try {
     const json = execSync(`npm view ${pkg}@${ver} time --json 2>/dev/null`, {
       encoding: "utf8",
