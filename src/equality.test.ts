@@ -1,6 +1,7 @@
 import { expect } from "vitest";
 import { testMatrix } from "./testMatrix.js";
 import type { ReactiveFramework } from "./framework.js";
+import { SkipTest } from "./framework.js";
 
 testMatrix("Equality & Same-Value Optimization", {
   "#28 same primitive value — no propagation"(fw: ReactiveFramework) {
@@ -95,6 +96,61 @@ testMatrix("Equality & Same-Value Optimization", {
     expect(d.read()).toBe(1);
     expect(cCalls).toBe(0);
     expect(dCalls).toBe(0);
+  },
+
+  "#31 signal custom equality comparator"(fw: ReactiveFramework) {
+    if (!fw.signalWithEquals) throw new SkipTest("no signalWithEquals");
+    const a = fw.signalWithEquals(
+      { x: 1, y: 2 },
+      (a, b) => a.x === b.x && a.y === b.y
+    );
+
+    let cCalls = 0;
+    const c = fw.computed(() => {
+      cCalls++;
+      return a.read();
+    });
+
+    expect(c.read()).toEqual({ x: 1, y: 2 });
+    expect(cCalls).toBe(1);
+
+    // Same value by custom equals — no propagation
+    a.write({ x: 1, y: 2 });
+    expect(c.read()).toEqual({ x: 1, y: 2 });
+    expect(cCalls).toBe(1);
+
+    // Different value — propagation
+    a.write({ x: 2, y: 3 });
+    expect(c.read()).toEqual({ x: 2, y: 3 });
+    expect(cCalls).toBe(2);
+  },
+
+  "#33 computed custom equality comparator"(fw: ReactiveFramework) {
+    if (!fw.computedWithEquals) throw new SkipTest("no computedWithEquals");
+    const a = fw.signal(0);
+    const b = fw.computedWithEquals(
+      () => Math.floor(a.read() / 10),
+      (a, b) => a === b
+    );
+
+    let cCalls = 0;
+    const c = fw.computed(() => {
+      cCalls++;
+      return b.read();
+    });
+
+    expect(c.read()).toBe(0);
+    expect(cCalls).toBe(1);
+
+    // a changes but b's floored value stays the same
+    a.write(5);
+    expect(c.read()).toBe(0);
+    expect(cCalls).toBe(1);
+
+    // Now b changes
+    a.write(10);
+    expect(c.read()).toBe(1);
+    expect(cCalls).toBe(2);
   },
 
   "#30 signal object identity"(fw: ReactiveFramework) {

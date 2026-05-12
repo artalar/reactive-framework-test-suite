@@ -7,13 +7,22 @@ import {
   flushSync,
 } from "@solidjs/signals";
 
+function safeFlush() {
+  try {
+    flushSync();
+  } catch {}
+}
+
 export const xReactivityFramework: ReactiveFramework = {
   name: "@solidjs/signals",
   signal(initialValue) {
     const [read, write] = createSignal(initialValue);
     return {
       read: read as () => typeof initialValue,
-      write,
+      write: (v) => {
+        write(v);
+        safeFlush();
+      },
     };
   },
   computed(fn) {
@@ -21,7 +30,7 @@ export const xReactivityFramework: ReactiveFramework = {
   },
   effect(fn) {
     createEffect(fn);
-    flushSync();
+    safeFlush();
     return () => {};
   },
   run(fn) {

@@ -22,4 +22,11 @@ export const reactivelyFramework: ReactiveFramework = {
   run(fn) {
     return fn();
   },
+  signalWithEquals(initialValue, equals) {
+    const r = reactive(initialValue, { equals });
+    return {
+      read: () => r.value,
+      write: (v) => (r.value = v),
+    };
+  },
 };

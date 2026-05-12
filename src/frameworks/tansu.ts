@@ -25,4 +25,15 @@ export const tansuFramework: ReactiveFramework = {
   batch(fn) {
     batch(fn);
   },
+  signalWithEquals(initialValue, equals) {
+    const w = writable(initialValue, { equal: equals });
+    return {
+      read: () => get(w),
+      write: (v) => w.set(v),
+    };
+  },
+  computedWithEquals(fn, equals) {
+    const d = computed(fn, { equal: equals });
+    return { read: () => get(d) };
+  },
 };

@@ -31,4 +31,13 @@ export const sjsFramework: ReactiveFramework = {
   untracked(fn) {
     return S.sample(fn);
   },
+  signalWithEquals(initialValue, equals) {
+    const s = S.data(initialValue, (a: typeof initialValue, b: typeof initialValue) =>
+      equals(a, b)
+    );
+    return {
+      read: () => s(),
+      write: (v) => s(v),
+    };
+  },
 };

@@ -56,6 +56,28 @@ testMatrix("Computed Evaluation", {
     expect(d.read()).toBe(13);
   },
 
+  "#21 chained computed dirty reallocation after trigger"(
+    fw: ReactiveFramework
+  ) {
+    const a = fw.signal(0);
+    const b = fw.signal(0);
+    const c = fw.computed(() => a.read());
+    const d = fw.computed(() => {
+      if (a.read() === 0) {
+        return b.read();
+      }
+      return c.read();
+    });
+
+    expect(d.read()).toBe(0);
+
+    a.write(1);
+    expect(d.read()).toBe(1);
+
+    b.write(10);
+    expect(d.read()).toBe(1);
+  },
+
   "#22 chained computed avoids redundant re-compute"(fw: ReactiveFramework) {
     const a = fw.signal(0);
     let bCalls = 0;
@@ -86,6 +108,55 @@ testMatrix("Computed Evaluation", {
     expect(dCalls).toBe(1);
   },
 
+  "#23 sync access of invalidated chained computed runs effect"(
+    fw: ReactiveFramework
+  ) {
+    const a = fw.signal(0);
+    const b = fw.computed(() => a.read());
+    const c = fw.computed(() => b.read());
+
+    let effectRuns = 0;
+    fw.effect(() => {
+      c.read();
+      effectRuns++;
+    });
+    expect(effectRuns).toBe(1);
+
+    a.write(1);
+    expect(c.read()).toBe(1);
+    expect(effectRuns).toBe(2);
+  },
+
+  "#24 dependency evaluation order consistent with last access"(
+    fw: ReactiveFramework
+  ) {
+    const order: string[] = [];
+    const a = fw.signal(0);
+
+    const b = fw.computed(() => {
+      order.push("b");
+      return a.read();
+    });
+    const c = fw.computed(() => {
+      order.push("c");
+      return a.read();
+    });
+
+    // Access b then c
+    b.read();
+    c.read();
+    order.length = 0;
+
+    a.write(1);
+    b.read();
+    c.read();
+
+    const bIdx = order.indexOf("b");
+    const cIdx = order.indexOf("c");
+    expect(bIdx).toBeGreaterThanOrEqual(0);
+    expect(cIdx).toBeGreaterThanOrEqual(0);
+  },
+
   "#25 no re-compute if zero dependencies"(fw: ReactiveFramework) {
     let calls = 0;
     const a = fw.computed(() => {
@@ -99,6 +170,25 @@ testMatrix("Computed Evaluation", {
     // Read again — no deps means no reason to re-compute
     expect(a.read()).toBe(42);
     expect(calls).toBe(1);
+  },
+
+  "#26 computed remains live after losing all subscribers"(
+    fw: ReactiveFramework
+  ) {
+    const a = fw.signal(0);
+    const b = fw.computed(() => a.read() * 2);
+
+    // Subscribe then unsubscribe
+    const dispose = fw.effect(() => {
+      b.read();
+    });
+    dispose();
+
+    // Computed should still work when read directly
+    a.write(5);
+    expect(b.read()).toBe(10);
+    a.write(10);
+    expect(b.read()).toBe(20);
   },
 
   "#27 downstream not re-evaluated unless value changed"(

@@ -21,4 +21,15 @@ export const angularSignalsFramework: ReactiveFramework = {
   run(fn) {
     return fn();
   },
+  signalWithEquals(initialValue, equals) {
+    const s = signal(initialValue, { equal: equals });
+    return {
+      read: () => s(),
+      write: (v) => s.set(v),
+    };
+  },
+  computedWithEquals(fn, equals) {
+    const c = computed(fn, { equal: equals });
+    return { read: () => c() };
+  },
 };

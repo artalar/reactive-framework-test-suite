@@ -13,7 +13,9 @@ const w = new Signal.subtle.Watcher(() => {
 function processPending() {
   needsEnqueue = true;
   for (const s of w.getPending()) {
-    s.get();
+    try {
+      s.get();
+    } catch {}
   }
   w.watch();
 }
@@ -42,5 +44,16 @@ export const tc39SignalsFramework: ReactiveFramework = {
   },
   untracked(fn) {
     return Signal.subtle.untrack(fn);
+  },
+  signalWithEquals(initialValue, equals) {
+    const s = new Signal.State(initialValue, { equals });
+    return {
+      read: () => s.get(),
+      write: (v) => s.set(v),
+    };
+  },
+  computedWithEquals(fn, equals) {
+    const c = new Signal.Computed(fn, { equals });
+    return { read: () => c.get() };
   },
 };

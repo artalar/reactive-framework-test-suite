@@ -74,6 +74,69 @@ testMatrix("Batching / Transaction", {
     });
   },
 
+  "#69 pending effects run even if batch callback throws"(
+    fw: ReactiveFramework
+  ) {
+    if (!fw.batch) throw new SkipTest("no batch");
+    const a = fw.signal(0);
+    let runs = 0;
+    fw.effect(() => {
+      a.read();
+      runs++;
+    });
+    expect(runs).toBe(1);
+
+    try {
+      fw.batch(() => {
+        a.write(1);
+        throw new Error("batch error");
+      });
+    } catch {}
+
+    // Effect should still have run with the updated value
+    expect(runs).toBe(2);
+    expect(a.read()).toBe(1);
+  },
+
+  "#70 effect first run is immediate even inside batch"(
+    fw: ReactiveFramework
+  ) {
+    if (!fw.batch) throw new SkipTest("no batch");
+    const a = fw.signal(0);
+    let runs = 0;
+
+    fw.batch(() => {
+      fw.effect(() => {
+        a.read();
+        runs++;
+      });
+      expect(runs).toBe(1);
+    });
+  },
+
+  "#71 no duplicate listener notifications within batch"(
+    fw: ReactiveFramework
+  ) {
+    if (!fw.batch) throw new SkipTest("no batch");
+    const a = fw.signal(0);
+    const b = fw.signal(0);
+    let runs = 0;
+
+    fw.effect(() => {
+      a.read();
+      b.read();
+      runs++;
+    });
+    expect(runs).toBe(1);
+
+    fw.batch(() => {
+      a.write(1);
+      b.write(1);
+    });
+    // Should notify once, not twice
+    expect(runs).toBe(2);
+  },
+
   "#72 intermediate values skipped (only final value observed)"(
     fw: ReactiveFramework
   ) {

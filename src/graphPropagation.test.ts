@@ -103,6 +103,33 @@ testMatrix("Graph Propagation", {
     expect(gCalls).toBe(1);
   },
 
+  "#4 asymmetric diamond (different path lengths)"(fw: ReactiveFramework) {
+    //     A
+    //   /   \
+    //  B     C
+    //        |
+    //        D
+    //   \   /
+    //     E
+    const a = fw.signal("a");
+    const b = fw.computed(() => a.read());
+    const c = fw.computed(() => a.read());
+    const d = fw.computed(() => c.read());
+
+    let eCalls = 0;
+    const e = fw.computed(() => {
+      eCalls++;
+      return b.read() + " " + d.read();
+    });
+
+    expect(e.read()).toBe("a a");
+    expect(eCalls).toBe(1);
+
+    a.write("b");
+    expect(e.read()).toBe("b b");
+    expect(eCalls).toBe(2);
+  },
+
   "#5 drop A→B→A updates"(fw: ReactiveFramework) {
     //     A
     //   / |
