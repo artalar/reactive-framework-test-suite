@@ -15,7 +15,8 @@ export const angularSignalsFramework: ReactiveFramework = {
     return { read: () => c() };
   },
   effect(fn) {
-    effect(fn);
+    const ref = effect(fn);
+    return () => ref.destroy();
   },
   run(fn) {
     return fn();

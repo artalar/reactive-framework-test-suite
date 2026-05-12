@@ -16,6 +16,7 @@ export const sjsFramework: ReactiveFramework = {
   },
   effect(fn) {
     S(fn);
+    return () => {};
   },
   run(fn) {
     let result: any;
@@ -23,5 +24,11 @@ export const sjsFramework: ReactiveFramework = {
       result = fn();
     });
     return result;
+  },
+  batch(fn) {
+    S.freeze(fn);
+  },
+  untracked(fn) {
+    return S.sample(fn);
   },
 };

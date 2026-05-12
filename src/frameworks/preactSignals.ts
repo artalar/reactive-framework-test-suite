@@ -3,6 +3,8 @@ import {
   signal,
   computed,
   effect,
+  batch,
+  untracked,
 } from "@preact/signals-core";
 
 export const preactSignalsFramework: ReactiveFramework = {
@@ -19,9 +21,15 @@ export const preactSignalsFramework: ReactiveFramework = {
     return { read: () => c.value };
   },
   effect(fn) {
-    effect(fn);
+    return effect(fn);
   },
   run(fn) {
     return fn();
+  },
+  batch(fn) {
+    batch(fn);
+  },
+  untracked(fn) {
+    return untracked(fn);
   },
 };

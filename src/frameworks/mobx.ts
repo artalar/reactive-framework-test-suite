@@ -4,6 +4,8 @@ import {
   computed,
   autorun,
   runInAction,
+  transaction,
+  untracked,
 } from "mobx";
 
 export const mobxFramework: ReactiveFramework = {
@@ -20,9 +22,15 @@ export const mobxFramework: ReactiveFramework = {
     return { read: () => c.get() };
   },
   effect(fn) {
-    autorun(fn);
+    return autorun(fn);
   },
   run(fn) {
     return fn();
+  },
+  batch(fn) {
+    transaction(fn);
+  },
+  untracked(fn) {
+    return untracked(fn);
   },
 };

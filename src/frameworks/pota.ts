@@ -18,6 +18,7 @@ export const potaFramework: ReactiveFramework = {
   },
   effect(fn) {
     effect(fn);
+    return () => {};
   },
   run(fn) {
     let result: any;
@@ -25,5 +26,8 @@ export const potaFramework: ReactiveFramework = {
       result = fn();
     });
     return result;
+  },
+  batch(fn) {
+    batch(fn);
   },
 };

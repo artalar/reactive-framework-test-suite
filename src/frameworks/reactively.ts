@@ -17,6 +17,7 @@ export const reactivelyFramework: ReactiveFramework = {
   effect(fn) {
     reactive(fn, true);
     stabilize();
+    return () => {};
   },
   run(fn) {
     return fn();

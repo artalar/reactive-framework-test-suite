@@ -4,6 +4,8 @@ import {
   computed,
   effect,
   effectScope,
+  startBatch,
+  endBatch,
 } from "alien-signals";
 
 export const alienSignalsFramework: ReactiveFramework = {
@@ -20,10 +22,21 @@ export const alienSignalsFramework: ReactiveFramework = {
     return { read: () => c() };
   },
   effect(fn) {
-    effect(fn);
+    return effect(fn) as unknown as () => void;
   },
   run(fn) {
     const dispose = effectScope(fn);
     return dispose as any;
+  },
+  batch(fn) {
+    startBatch();
+    try {
+      fn();
+    } finally {
+      endBatch();
+    }
+  },
+  effectScope(fn) {
+    return effectScope(fn) as unknown as () => void;
   },
 };

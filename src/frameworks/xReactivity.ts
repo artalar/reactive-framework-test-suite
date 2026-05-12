@@ -22,6 +22,7 @@ export const xReactivityFramework: ReactiveFramework = {
   effect(fn) {
     createEffect(fn);
     flushSync();
+    return () => {};
   },
   run(fn) {
     let result: any;

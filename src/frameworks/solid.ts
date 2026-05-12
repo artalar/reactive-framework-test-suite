@@ -4,6 +4,8 @@ import {
   createMemo,
   createEffect,
   createRoot,
+  batch,
+  untrack,
 } from "solid-js";
 
 export const solidFramework: ReactiveFramework = {
@@ -20,6 +22,7 @@ export const solidFramework: ReactiveFramework = {
   },
   effect(fn) {
     createEffect(fn);
+    return () => {};
   },
   run(fn) {
     let result: any;
@@ -27,5 +30,11 @@ export const solidFramework: ReactiveFramework = {
       result = fn();
     });
     return result;
+  },
+  batch(fn) {
+    batch(fn);
+  },
+  untracked(fn) {
+    return untrack(fn);
   },
 };

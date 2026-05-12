@@ -1,6 +1,7 @@
 import { describe, test, afterAll } from "vitest";
 import { frameworks } from "./frameworks/index.js";
 import type { ReactiveFramework } from "./framework.js";
+import { SkipTest } from "./framework.js";
 
 export function testMatrix(
   section: string,
@@ -18,6 +19,10 @@ export function testMatrix(
             fw.run(() => fn(fw));
             results[fw.name][name] = "✅";
           } catch (e) {
+            if (e instanceof SkipTest) {
+              results[fw.name][name] = "⬜";
+              return;
+            }
             results[fw.name][name] = "❌";
             throw e;
           }

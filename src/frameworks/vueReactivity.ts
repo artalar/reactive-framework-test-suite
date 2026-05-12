@@ -2,8 +2,10 @@ import type { ReactiveFramework } from "../framework.js";
 import {
   ref,
   computed,
-  effect,
   ReactiveEffect,
+  effectScope,
+  pauseTracking,
+  resetTracking,
 } from "@vue/reactivity";
 
 export const vueReactivityFramework: ReactiveFramework = {
@@ -24,8 +26,22 @@ export const vueReactivityFramework: ReactiveFramework = {
   effect(fn) {
     const e = new ReactiveEffect(fn);
     e.run();
+    return () => e.stop();
   },
   run(fn) {
     return fn();
+  },
+  untracked(fn) {
+    pauseTracking();
+    try {
+      return fn();
+    } finally {
+      resetTracking();
+    }
+  },
+  effectScope(fn) {
+    const scope = effectScope();
+    scope.run(fn);
+    return () => scope.stop();
   },
 };

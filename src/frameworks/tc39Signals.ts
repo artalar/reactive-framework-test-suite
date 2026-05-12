@@ -35,8 +35,12 @@ export const tc39SignalsFramework: ReactiveFramework = {
     const c = new Signal.Computed(() => fn());
     w.watch(c);
     c.get();
+    return () => w.unwatch(c);
   },
   run(fn) {
     return fn();
+  },
+  untracked(fn) {
+    return Signal.subtle.untrack(fn);
   },
 };

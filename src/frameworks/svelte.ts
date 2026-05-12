@@ -16,6 +16,7 @@ export const svelteFramework: ReactiveFramework = {
   },
   effect(fn) {
     $.render_effect(fn);
+    return () => {};
   },
   run(fn) {
     let result: any;

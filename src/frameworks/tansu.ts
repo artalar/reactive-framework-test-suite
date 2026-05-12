@@ -1,5 +1,5 @@
 import type { ReactiveFramework } from "../framework.js";
-import { writable, computed, derived, get } from "@amadeus-it-group/tansu";
+import { writable, computed, derived, get, batch } from "@amadeus-it-group/tansu";
 
 export const tansuFramework: ReactiveFramework = {
   name: "tansu",
@@ -16,9 +16,13 @@ export const tansuFramework: ReactiveFramework = {
   },
   effect(fn) {
     const d = computed(fn);
-    d.subscribe(() => {});
+    const unsub = d.subscribe(() => {});
+    return unsub;
   },
   run(fn) {
     return fn();
+  },
+  batch(fn) {
+    batch(fn);
   },
 };

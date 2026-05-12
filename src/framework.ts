@@ -2,8 +2,11 @@ export interface ReactiveFramework {
   name: string;
   signal<T>(initialValue: T): Signal<T>;
   computed<T>(fn: () => T): Computed<T>;
-  effect(fn: () => void): void;
+  effect(fn: () => void): () => void;
   run<T>(fn: () => T): T;
+  batch?(fn: () => void): void;
+  untracked?<T>(fn: () => T): T;
+  effectScope?(fn: () => void): () => void;
 }
 
 export interface Signal<T> {
@@ -13,4 +16,8 @@ export interface Signal<T> {
 
 export interface Computed<T> {
   read(): T;
+}
+
+export class SkipTest {
+  constructor(public reason: string) {}
 }
