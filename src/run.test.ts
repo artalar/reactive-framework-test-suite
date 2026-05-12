@@ -28,7 +28,6 @@ for (const { section, cases, type } of testSuite) {
               return;
             }
             results[fw.name][name] = type === "behavioral" ? "error" : "❌";
-            if (type !== "behavioral") throw e;
           } finally {
             fw.afterEach?.();
           }

@@ -46,6 +46,7 @@ export const xReactivityFramework: ReactiveFramework = {
     let result: any;
     createRoot((dispose) => {
       result = fn();
+      safeFlush();
     });
     return result;
   },
