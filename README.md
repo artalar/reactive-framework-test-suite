@@ -14,21 +14,21 @@ The **Behavioral Differences** section is separate — those tests reflect desig
 
 ## Frameworks
 
-| Framework | Package |
-|-----------|---------|
-| alien-signals | `alien-signals` |
-| @preact/signals-core | `@preact/signals-core` |
-| @reactively/core | `@reactively/core` |
-| tansu | `@amadeus-it-group/tansu` |
-| signal-polyfill (TC39) | `signal-polyfill` |
-| @vue/reactivity | `@vue/reactivity` |
-| mobx | `mobx` |
-| svelte | `svelte` |
-| solid-js | `solid-js` |
-| @solidjs/signals | `@solidjs/signals` |
-| S.js | `s-js` |
-| @angular/core | `@angular/core` |
-| anod | `anod` |
+| Framework | Package | Version | Published |
+|-----------|---------|---------|-----------|
+| alien-signals | `alien-signals` | 3.1.2 | 2025-12-24 |
+| @preact/signals-core | `@preact/signals-core` | 1.14.2 | 2026-05-11 |
+| @reactively/core | `@reactively/core` | 0.0.8 | 2023-03-20 |
+| tansu | `@amadeus-it-group/tansu` | 2.0.0 | 2024-12-04 |
+| signal-polyfill (TC39) | `signal-polyfill` | 0.2.2 | 2025-01-17 |
+| @vue/reactivity | `@vue/reactivity` | 3.5.34 | 2026-05-06 |
+| mobx | `mobx` | 6.15.3 | 2026-05-07 |
+| svelte | `svelte` | 5.55.5 | 2026-04-23 |
+| solid-js | `solid-js` | 1.9.12 | 2026-03-24 |
+| @solidjs/signals | `@solidjs/signals` | 0.3.2 | 2025-04-29 |
+| S.js | `s-js` | 0.4.9 | 2018-07-28 |
+| @angular/core | `@angular/core` | 20.3.20 | 2026-05-06 |
+| anod | `anod` | 0.9.1 | 2026-04-27 |
 
 ## Summary
 

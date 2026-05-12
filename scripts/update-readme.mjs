@@ -1,6 +1,7 @@
-import { readdirSync, readFileSync, writeFileSync } from "fs";
+import { readdirSync, readFileSync, writeFileSync, existsSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
+import { execSync } from "child_process";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
@@ -217,8 +218,8 @@ The **Behavioral Differences** section is separate — those tests reflect desig
 
 ## Frameworks
 
-| Framework | Package |
-|-----------|---------|
+| Framework | Package | Version | Published |
+|-----------|---------|---------|-----------|
 `;
 
 const fwPackages = {
@@ -238,9 +239,36 @@ const fwPackages = {
   anod: "anod",
 };
 
+function getPkgVersion(pkg) {
+  try {
+    const p = join(root, "node_modules", pkg, "package.json");
+    if (existsSync(p)) return JSON.parse(readFileSync(p, "utf-8")).version;
+  } catch {}
+  try {
+    const p = join(root, "node_modules", ...pkg.split("/"), "package.json");
+    if (existsSync(p)) return JSON.parse(readFileSync(p, "utf-8")).version;
+  } catch {}
+  return "?";
+}
+
+function getPkgDate(pkg, ver) {
+  try {
+    const json = execSync(`npm view ${pkg}@${ver} time --json 2>/dev/null`, {
+      encoding: "utf8",
+      maxBuffer: 1024 * 1024,
+    });
+    const date = JSON.parse(json)[ver];
+    return date ? date.slice(0, 10) : "?";
+  } catch {
+    return "?";
+  }
+}
+
 for (const fw of fwNames) {
   const pkg = fwPackages[fw] || fw;
-  readme += `| ${fw} | \`${pkg}\` |\n`;
+  const ver = getPkgVersion(pkg);
+  const date = getPkgDate(pkg, ver);
+  readme += `| ${fw} | \`${pkg}\` | ${ver} | ${date} |\n`;
 }
 
 readme += `
@@ -262,6 +290,56 @@ for (const section of sections) {
 }
 
 readme += `## Usage
+
+### Test your own framework
+
+Install the package:
+
+\`\`\`sh
+npm install reactive-framework-test-suite
+\`\`\`
+
+Implement the \`ReactiveFramework\` adapter:
+
+\`\`\`ts
+import type { ReactiveFramework } from "reactive-framework-test-suite";
+
+const myFramework: ReactiveFramework = {
+  name: "my-framework",
+  signal(initialValue) { /* ... */ },
+  computed(fn) { /* ... */ },
+  effect(fn) { /* ... return dispose */ },
+  run(fn) { /* ... */ },
+  // Optional:
+  batch(fn) { /* ... */ },
+  untracked(fn) { /* ... */ },
+  effectCleanup: true,   // set true if effect supports cleanup return
+  computedThrows: true,  // set true if computed re-throws on read
+};
+\`\`\`
+
+Wire it up with your test runner (vitest, jest, mocha, etc.):
+
+\`\`\`ts
+import { testSuite, SkipTest } from "reactive-framework-test-suite";
+
+for (const { section, cases } of testSuite) {
+  describe(section, () => {
+    for (const [name, fn] of Object.entries(cases)) {
+      test(name, () => {
+        try {
+          myFramework.run(() => fn(myFramework));
+        } catch (e) {
+          if (e instanceof SkipTest) return; // optional API not available
+          throw e;
+        }
+      });
+    }
+  });
+}
+\`\`\`
+
+### Run the cross-framework matrix locally
 
 \`\`\`sh
 npm install
