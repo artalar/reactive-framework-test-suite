@@ -31,7 +31,7 @@ export const reactivelyFramework: ReactiveFramework = {
     };
   },
   run(fn) {
-    return fn();
+    fn();
   },
   afterEach() {
     for (const r of tracked) {

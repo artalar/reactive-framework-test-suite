@@ -56,17 +56,15 @@ export const anodFramework: ReactiveFramework = {
     return () => eff.dispose();
   },
   run(fn) {
-    let result: any;
     root((ctx) => {
       const prevFactory = currentFactory;
       currentFactory = ctx;
       try {
-        result = fn();
+        fn();
       } finally {
         currentFactory = prevFactory;
       }
     });
-    return result!;
   },
   batch(fn) {
     anodBatch(fn);

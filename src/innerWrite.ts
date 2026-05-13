@@ -675,6 +675,27 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
     expect(observed[observed.length - 1]).toBe(10); // c=5 + side=5
   },
 
+  "#213 inner write during initial effect execution doesn't block future propagation"(
+    fw: ReactiveFramework
+  ) {
+    const s = fw.signal(1);
+    const c = fw.computed(() => s.read());
+
+    fw.effect(() => {
+      if (c.read() > 0) {
+        s.write(0);
+      }
+    });
+
+    expect(s.read()).toBe(0);
+
+    s.write(2);
+    expect(s.read()).toBe(0);
+
+    s.write(3);
+    expect(s.read()).toBe(0);
+  },
+
   "#212 inner write through computed doesn't block future propagation"(
     fw: ReactiveFramework
   ) {

@@ -46,7 +46,7 @@ export const angularSignalsFramework: ReactiveFramework = {
     };
   },
   run(fn) {
-    return fn();
+    fn();
   },
   untracked(fn) {
     return untracked(fn);

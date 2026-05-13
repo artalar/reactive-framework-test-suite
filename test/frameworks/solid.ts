@@ -39,11 +39,10 @@ export const solidFramework: ReactiveFramework = {
     return dispose;
   },
   run(fn) {
-    let result: any;
     createRoot((dispose: () => void) => {
-      result = fn();
+      fn();
+      dispose();
     });
-    return result;
   },
   batch(fn) {
     batch(fn);

@@ -43,12 +43,11 @@ export const xReactivityFramework: ReactiveFramework = {
     return dispose;
   },
   run(fn) {
-    let result: any;
     createRoot((dispose) => {
-      result = fn();
+      fn();
       safeFlush();
+      dispose();
     });
-    return result;
   },
   batch(fn) {
     batchDepth++;

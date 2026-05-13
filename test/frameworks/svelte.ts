@@ -26,12 +26,11 @@ export const svelteFramework: ReactiveFramework = {
     return destroy;
   },
   run(fn) {
-    let result: any;
     const destroy = $.effect_root(() => {
-      result = fn();
+      fn();
     });
     $.flush();
-    return result;
+    destroy();
   },
   effectCleanup: true,
   computedThrows: true,

@@ -20,7 +20,7 @@ export const tansuFramework: ReactiveFramework = {
     return unsub;
   },
   run(fn) {
-    return fn();
+    fn();
   },
   batch(fn) {
     batch(fn);

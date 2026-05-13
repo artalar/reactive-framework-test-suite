@@ -25,7 +25,7 @@ export const mobxFramework: ReactiveFramework = {
     return autorun(fn);
   },
   run(fn) {
-    return fn();
+    fn();
   },
   batch(fn) {
     transaction(fn);

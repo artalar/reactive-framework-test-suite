@@ -8,8 +8,6 @@ import {
   endBatch,
   setActiveSub,
 } from "alien-signals";
-// effectScope is still imported for run() but removed from framework interface
-
 export const alienSignalsFramework: ReactiveFramework = {
   name: "alien-signals",
   signal(initialValue) {
@@ -27,8 +25,7 @@ export const alienSignalsFramework: ReactiveFramework = {
     return effect(fn) as unknown as () => void;
   },
   run(fn) {
-    const dispose = effectScope(fn);
-    return dispose as any;
+    effectScope(fn)();
   },
   batch(fn) {
     startBatch();

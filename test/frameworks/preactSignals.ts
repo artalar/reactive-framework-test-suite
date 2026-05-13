@@ -24,7 +24,7 @@ export const preactSignalsFramework: ReactiveFramework = {
     return effect(fn);
   },
   run(fn) {
-    return fn();
+    fn();
   },
   batch(fn) {
     batch(fn);

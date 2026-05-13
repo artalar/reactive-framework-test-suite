@@ -37,7 +37,7 @@ export const vueReactivityFramework: ReactiveFramework = {
     return () => e.stop();
   },
   run(fn) {
-    return fn();
+    fn();
   },
   untracked(fn) {
     pauseTracking();

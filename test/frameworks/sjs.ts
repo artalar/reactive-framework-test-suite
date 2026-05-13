@@ -28,11 +28,10 @@ export const sjsFramework: ReactiveFramework = {
     return dispose;
   },
   run(fn) {
-    let result: any;
-    S.root(() => {
-      result = fn();
+    S.root((dispose: () => void) => {
+      fn();
+      dispose();
     });
-    return result;
   },
   batch(fn) {
     S.freeze(fn);

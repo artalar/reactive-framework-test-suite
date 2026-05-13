@@ -50,7 +50,7 @@ export const tc39SignalsFramework: ReactiveFramework = {
     };
   },
   run(fn) {
-    return fn();
+    fn();
   },
   untracked(fn) {
     return Signal.subtle.untrack(fn);

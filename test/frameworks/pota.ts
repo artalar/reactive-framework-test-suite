@@ -29,11 +29,10 @@ export const potaFramework: ReactiveFramework = {
     return () => {};
   },
   run(fn) {
-    let result: any;
     root((dispose: () => void) => {
-      result = fn();
+      fn();
+      dispose();
     });
-    return result;
   },
   batch(fn) {
     batch(fn);
