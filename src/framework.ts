@@ -3,7 +3,7 @@ export interface ReactiveFramework {
   signal<T>(initialValue: T): Signal<T>;
   computed<T>(fn: () => T): Computed<T>;
   effect(fn: () => void | (() => void)): () => void;
-  run<T>(fn: () => T): T;
+  run(fn: () => void): void;
   batch?(fn: () => void): void;
   untracked?<T>(fn: () => T): T;
 
