@@ -1,8 +1,8 @@
 # Reactive Framework Test Suite
 
-Cross-library test suite for comparing reactive signal behavior across **14 frameworks** with **180 test cases**.
+Cross-library test suite for comparing reactive signal behavior across **14 frameworks** with **181 test cases**.
 
-> 2078 passed, 190 failed, 252 skipped out of 2520 total runs
+> 2090 passed, 192 failed, 252 skipped out of 2534 total runs
 
 Test cases are collected and adapted from the test suites of all participating frameworks — thanks to every project for their thorough testing work. This suite focuses on **reactive semantics** (propagation, batching, disposal, edge cases), not API completeness. Tests that require an optional capability (e.g. `batch`) are skipped (⬜) for frameworks that don't expose it, rather than marked as failures.
 
@@ -35,20 +35,20 @@ The **Behavioral Differences** section is separate — those tests reflect desig
 
 | Framework              | Pass | Fail | Skip | Total |
 | ---------------------- | ---- | ---- | ---- | ----- |
-| alien-signals          |  180 |    0 |    0 |   180 |
-| @preact/signals-core   |  178 |    2 |    0 |   180 |
-| @vue/reactivity        |  172 |    8 |    0 |   180 |
-| anod                   |  166 |   14 |    0 |   180 |
-| tansu                  |  163 |    4 |   13 |   180 |
-| @solidjs/signals       |  161 |    6 |   13 |   180 |
-| solid-js               |  154 |   17 |    9 |   180 |
-| mobx                   |  148 |   19 |   13 |   180 |
-| signal-polyfill (TC39) |  145 |    6 |   29 |   180 |
-| @angular/core          |  141 |   10 |   29 |   180 |
-| svelte                 |  131 |   12 |   37 |   180 |
-| S.js                   |  130 |   41 |    9 |   180 |
-| @reactively/core       |  114 |   16 |   50 |   180 |
-| r3                     |   95 |   35 |   50 |   180 |
+| alien-signals          |  181 |    0 |    0 |   181 |
+| @preact/signals-core   |  179 |    2 |    0 |   181 |
+| @vue/reactivity        |  173 |    8 |    0 |   181 |
+| anod                   |  167 |   14 |    0 |   181 |
+| tansu                  |  164 |    4 |   13 |   181 |
+| @solidjs/signals       |  161 |    7 |   13 |   181 |
+| solid-js               |  155 |   17 |    9 |   181 |
+| mobx                   |  149 |   19 |   13 |   181 |
+| signal-polyfill (TC39) |  145 |    7 |   29 |   181 |
+| @angular/core          |  142 |   10 |   29 |   181 |
+| svelte                 |  132 |   12 |   37 |   181 |
+| S.js                   |  131 |   41 |    9 |   181 |
+| @reactively/core       |  115 |   16 |   50 |   181 |
+| r3                     |   96 |   35 |   50 |   181 |
 
 ## Results
 
@@ -168,22 +168,22 @@ The **Behavioral Differences** section is separate — those tests reflect desig
 
 ### Inner Write
 
-| Framework              | #50 | #51 | #52..#53,... ×14 | #54,#139 | #180..#181,#184 | #179 | #57 | #182 | #183 | #185 | #186 |
-| ---------------------- | --- | --- | ---------------- | -------- | --------------- | ---- | --- | ---- | ---- | ---- | ---- |
-| alien-signals          |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ✅ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
-| @preact/signals-core   |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ✅ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
-| @reactively/core       |   ❌ |   ⬜ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ⬜ |    ✅ |    ✅ |    ❌ |
-| tansu                  |   ✅ |   ⬜ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
-| signal-polyfill (TC39) |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ⬜ |    ✅ |    ✅ |    ✅ |
-| @vue/reactivity        |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ✅ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
-| mobx                   |   ✅ |   ⬜ |                ✅ |        ✅ |               ✅ |    ✅ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
-| svelte                 |   ✅ |   ✅ |                ✅ |        ❌ |               ✅ |    ❌ |   ❌ |    ⬜ |    ✅ |    ✅ |    ✅ |
-| solid-js               |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ✅ |    ❌ |    ⬜ |    ✅ |
-| @solidjs/signals       |   ✅ |   ⬜ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
-| S.js                   |   ✅ |   ❌ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ❌ |    ❌ |    ⬜ |    ✅ |
-| @angular/core          |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ❌ |   ❌ |    ⬜ |    ✅ |    ✅ |    ✅ |
-| anod                   |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ❌ |    ✅ |    ✅ |    ✅ |
-| r3                     |   ✅ |   ⬜ |                ✅ |        ✅ |               ❌ |    ❌ |   ❌ |    ⬜ |    ❌ |    ❌ |    ❌ |
+| Framework              | #50 | #51 | #52..#53,... ×14 | #54,#139 | #180..#181,#184 | #179 | #57 | #182 | #183 | #185 | #186 | #212 |
+| ---------------------- | --- | --- | ---------------- | -------- | --------------- | ---- | --- | ---- | ---- | ---- | ---- | ---- |
+| alien-signals          |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ✅ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
+| @preact/signals-core   |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ✅ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
+| @reactively/core       |   ❌ |   ⬜ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ⬜ |    ✅ |    ✅ |    ❌ |    ✅ |
+| tansu                  |   ✅ |   ⬜ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
+| signal-polyfill (TC39) |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ⬜ |    ✅ |    ✅ |    ✅ |    ❌ |
+| @vue/reactivity        |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ✅ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
+| mobx                   |   ✅ |   ⬜ |                ✅ |        ✅ |               ✅ |    ✅ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |    ✅ |
+| svelte                 |   ✅ |   ✅ |                ✅ |        ❌ |               ✅ |    ❌ |   ❌ |    ⬜ |    ✅ |    ✅ |    ✅ |    ✅ |
+| solid-js               |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ✅ |    ❌ |    ⬜ |    ✅ |    ✅ |
+| @solidjs/signals       |   ✅ |   ⬜ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ✅ |    ✅ |    ✅ |    ✅ |    ❌ |
+| S.js                   |   ✅ |   ❌ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ❌ |    ❌ |    ⬜ |    ✅ |    ✅ |
+| @angular/core          |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ❌ |   ❌ |    ⬜ |    ✅ |    ✅ |    ✅ |    ✅ |
+| anod                   |   ✅ |   ✅ |                ✅ |        ✅ |               ✅ |    ❌ |   ✅ |    ❌ |    ✅ |    ✅ |    ✅ |    ✅ |
+| r3                     |   ✅ |   ⬜ |                ✅ |        ✅ |               ❌ |    ❌ |   ❌ |    ⬜ |    ❌ |    ❌ |    ❌ |    ✅ |
 
 ### Cycle & Infinite Loop Detection
 

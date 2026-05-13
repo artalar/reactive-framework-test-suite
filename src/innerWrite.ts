@@ -674,4 +674,26 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
     src.write(5);
     expect(observed[observed.length - 1]).toBe(10); // c=5 + side=5
   },
+
+  "#212 inner write through computed doesn't block future propagation"(
+    fw: ReactiveFramework
+  ) {
+    const s = fw.signal(0);
+    const c = fw.computed(() => s.read());
+
+    fw.effect(() => {
+      if (c.read() > 0) {
+        s.write(0);
+      }
+    });
+
+    s.write(1);
+    expect(s.read()).toBe(0);
+
+    s.write(2);
+    expect(s.read()).toBe(0);
+
+    s.write(3);
+    expect(s.read()).toBe(0);
+  },
 };
