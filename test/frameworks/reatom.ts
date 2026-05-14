@@ -6,7 +6,6 @@ import {
   computed,
   context,
   effect,
-  notify,
   peek,
 } from "@reatom/core";
 
@@ -40,9 +39,12 @@ export const reatomFramework: ReactiveFramework = {
   batch(fn: () => void) {
     batch(fn, true);
   },
-  run: context.start,
+  run(fn) {
+    try {
+      context.start(fn);
+    } finally {
+      context.reset();
+    }
+  },
   untracked: peek,
-  // afterEach: context.reset,
-  effectCleanup: true,
-  computedThrows: true,
 };

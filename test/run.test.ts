@@ -28,8 +28,6 @@ for (const { section, cases, type } of testSuite) {
               return;
             }
             results[fw.name][name] = type === "behavioral" ? "error" : "❌";
-          } finally {
-            fw.afterEach?.();
           }
         });
       }

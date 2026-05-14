@@ -78,6 +78,4 @@ export const anodFramework: ReactiveFramework = {
       currentCtx = prevCtx;
     }
   },
-  effectCleanup: true,
-  computedThrows: true,
 };

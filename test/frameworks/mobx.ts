@@ -33,5 +33,4 @@ export const mobxFramework: ReactiveFramework = {
   untracked(fn) {
     return untracked(fn);
   },
-  computedThrows: true,
 };

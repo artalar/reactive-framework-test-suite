@@ -55,6 +55,4 @@ export const tc39SignalsFramework: ReactiveFramework = {
   untracked(fn) {
     return Signal.subtle.untrack(fn);
   },
-  effectCleanup: true,
-  computedThrows: true,
 };

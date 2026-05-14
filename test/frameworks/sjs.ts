@@ -39,5 +39,4 @@ export const sjsFramework: ReactiveFramework = {
   untracked(fn) {
     return S.sample(fn);
   },
-  effectCleanup: true,
 };

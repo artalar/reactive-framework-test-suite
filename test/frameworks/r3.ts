@@ -60,5 +60,4 @@ export const r3Framework: ReactiveFramework = {
   run(fn) {
     fn();
   },
-  computedThrows: true,
 };

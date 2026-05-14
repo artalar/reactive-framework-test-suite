@@ -61,5 +61,4 @@ export const xReactivityFramework: ReactiveFramework = {
   untracked(fn) {
     return untrack(fn);
   },
-  computedThrows: true,
 };
