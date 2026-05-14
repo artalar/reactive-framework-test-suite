@@ -40,6 +40,4 @@ export const potaFramework: ReactiveFramework = {
   untracked(fn) {
     return untrack(fn);
   },
-  effectCleanup: true,
-  computedThrows: true,
 };

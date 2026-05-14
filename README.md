@@ -336,23 +336,25 @@ Implement the `ReactiveFramework` adapter:
 import type { ReactiveFramework } from "reactive-framework-test-suite";
 
 const myFramework: ReactiveFramework = {
-  name: "my-framework",
   signal(initialValue) { /* ... */ },
   computed(fn) { /* ... */ },
   effect(fn) { /* ... return dispose */ },
   run(fn) { /* ... */ },
   // Optional:
+  name: "my-framework",
   batch(fn) { /* ... */ },
   untracked(fn) { /* ... */ },
-  effectCleanup: true,   // set true if effect supports cleanup return
-  computedThrows: true,  // set true if computed re-throws on read
 };
 ```
+
+Capabilities like `effectCleanup` and `computedThrows` are auto-detected — call `detectCapabilities(myFramework)` once before running tests.
 
 Wire it up with your test runner (vitest, jest, mocha, etc.):
 
 ```ts
-import { testSuite, SkipTest } from "reactive-framework-test-suite";
+import { testSuite, SkipTest, detectCapabilities } from "reactive-framework-test-suite";
+
+detectCapabilities(myFramework);
 
 for (const { section, cases } of testSuite) {
   describe(section, () => {

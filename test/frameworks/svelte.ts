@@ -32,6 +32,4 @@ export const svelteFramework: ReactiveFramework = {
     $.flush();
     destroy();
   },
-  effectCleanup: true,
-  computedThrows: true,
 };

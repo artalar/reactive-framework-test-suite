@@ -1,4 +1,5 @@
 import type { ReactiveFramework } from "../../src/framework.js";
+import { detectCapabilities } from "../../src/framework.js";
 
 import { alienSignalsFramework } from "./alienSignals.js";
 import { preactSignalsFramework } from "./preactSignals.js";
@@ -57,3 +58,7 @@ try {
   const { r3Framework } = await import("./r3.js");
   frameworks.push(r3Framework);
 } catch {}
+
+for (const fw of frameworks) {
+  detectCapabilities(fw);
+}

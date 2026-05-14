@@ -55,6 +55,4 @@ export const vueReactivityFramework: ReactiveFramework = {
       endBatch();
     }
   },
-  effectCleanup: true,
-  computedThrows: true,
 };

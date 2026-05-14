@@ -1,6 +1,6 @@
 import { expect } from "./assert.js";
 import type { ReactiveFramework } from "./framework.js";
-import { SkipTest } from "./framework.js";
+import { SkipTest, hasEffectCleanup } from "./framework.js";
 
 export const section = "Effect Lifecycle";
 export const cases: Record<string, (fw: ReactiveFramework) => any> = {
@@ -44,7 +44,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   },
 
   "#38 effect cleanup fn called before each re-run"(fw: ReactiveFramework) {
-    if (!fw.effectCleanup) throw new SkipTest("no effectCleanup");
+    if (!hasEffectCleanup(fw)) throw new SkipTest("no effectCleanup");
     const a = fw.signal(0);
     const log: string[] = [];
     fw.effect(() => {
@@ -64,7 +64,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   },
 
   "#39 effect cleanup fn called on disposal"(fw: ReactiveFramework) {
-    if (!fw.effectCleanup) throw new SkipTest("no effectCleanup");
+    if (!hasEffectCleanup(fw)) throw new SkipTest("no effectCleanup");
     const a = fw.signal(0);
     let cleanupCalled = false;
     const dispose = fw.effect(() => {
@@ -82,7 +82,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   "#40 effect cleanup runs outside reactive evaluation context"(
     fw: ReactiveFramework
   ) {
-    if (!fw.effectCleanup) throw new SkipTest("no effectCleanup");
+    if (!hasEffectCleanup(fw)) throw new SkipTest("no effectCleanup");
     const a = fw.signal(0);
     const b = fw.signal(100);
     let effectRuns = 0;
@@ -146,7 +146,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   },
 
   "#109 only the most recent cleanup function runs"(fw: ReactiveFramework) {
-    if (!fw.effectCleanup) throw new SkipTest("no effectCleanup");
+    if (!hasEffectCleanup(fw)) throw new SkipTest("no effectCleanup");
     const a = fw.signal(0);
     const log: string[] = [];
 
@@ -167,7 +167,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   },
 
   "#110 double-dispose is safe"(fw: ReactiveFramework) {
-    if (!fw.effectCleanup) throw new SkipTest("no effectCleanup");
+    if (!hasEffectCleanup(fw)) throw new SkipTest("no effectCleanup");
     const a = fw.signal(0);
     let cleanupCount = 0;
     const dispose = fw.effect(() => {
@@ -185,7 +185,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   },
 
   "#111 cleanup-triggered dispose prevents re-run"(fw: ReactiveFramework) {
-    if (!fw.effectCleanup) throw new SkipTest("no effectCleanup");
+    if (!hasEffectCleanup(fw)) throw new SkipTest("no effectCleanup");
     const a = fw.signal(0);
     let runs = 0;
     let dispose: (() => void) | undefined;
@@ -209,7 +209,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   "#140 cleanup called when effect self-disposes during execution"(
     fw: ReactiveFramework
   ) {
-    if (!fw.effectCleanup) throw new SkipTest("no effectCleanup");
+    if (!hasEffectCleanup(fw)) throw new SkipTest("no effectCleanup");
     const a = fw.signal(0);
     let cleanupCalled = false;
     let dispose: (() => void) | undefined;
@@ -306,7 +306,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   },
 
   "#144 cleanup on destroy is idempotent"(fw: ReactiveFramework) {
-    if (!fw.effectCleanup) throw new SkipTest("no effectCleanup");
+    if (!hasEffectCleanup(fw)) throw new SkipTest("no effectCleanup");
     const a = fw.signal(0);
     let cleanupCount = 0;
 
@@ -327,7 +327,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   "#178 dispose cleanup reads don't leak to parent tracking context"(
     fw: ReactiveFramework
   ) {
-    if (!fw.effectCleanup) throw new SkipTest("no effectCleanup");
+    if (!hasEffectCleanup(fw)) throw new SkipTest("no effectCleanup");
     const a = fw.signal(0);
     const b = fw.signal(100);
     let outerRuns = 0;

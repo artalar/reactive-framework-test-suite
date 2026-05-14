@@ -50,5 +50,4 @@ export const solidFramework: ReactiveFramework = {
   untracked(fn) {
     return untrack(fn);
   },
-  effectCleanup: true,
 };

@@ -31,21 +31,16 @@ export const reactivelyFramework: ReactiveFramework = {
     };
   },
   run(fn) {
-    fn();
-  },
-  afterEach() {
-    for (const r of tracked) {
-      (r as any).effect = false;
-      (r as any).state = 0; // CacheClean — prevents re-evaluation during stabilize
-      try {
-        (r as any).removeParentObservers();
-      } catch {}
-    }
-    tracked = [];
-    // Flush EffectQueue — stabilize() clears it at the end if no throw
     try {
-      stabilize();
-    } catch {}
+      fn();
+    } finally {
+      for (const r of tracked) {
+        (r as any).effect = false;
+        (r as any).state = 0;
+        try { (r as any).removeParentObservers(); } catch {}
+      }
+      tracked = [];
+      try { stabilize(); } catch {}
+    }
   },
-  computedThrows: true,
 };

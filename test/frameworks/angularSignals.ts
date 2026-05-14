@@ -51,6 +51,4 @@ export const angularSignalsFramework: ReactiveFramework = {
   untracked(fn) {
     return untracked(fn);
   },
-  effectCleanup: true,
-  computedThrows: true,
 };

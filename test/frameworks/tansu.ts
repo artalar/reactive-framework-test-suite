@@ -28,5 +28,4 @@ export const tansuFramework: ReactiveFramework = {
   untracked(fn) {
     return untrack(fn);
   },
-  computedThrows: true,
 };

@@ -22,7 +22,7 @@ export const alienSignalsFramework: ReactiveFramework = {
     return { read: () => c() };
   },
   effect(fn) {
-    return effect(fn) as unknown as () => void;
+    return effect(fn);
   },
   run(fn) {
     effectScope(fn)();
@@ -43,6 +43,4 @@ export const alienSignalsFramework: ReactiveFramework = {
       setActiveSub(prev);
     }
   },
-  effectCleanup: true,
-  computedThrows: true,
 };

@@ -1,6 +1,6 @@
 import { expect } from "./assert.js";
 import type { ReactiveFramework } from "./framework.js";
-import { SkipTest } from "./framework.js";
+import { SkipTest, hasEffectCleanup, hasComputedThrows } from "./framework.js";
 
 export const section = "Inner Write";
 export const cases: Record<string, (fw: ReactiveFramework) => any> = {
@@ -20,7 +20,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   "#51 effect cleanup modifying dependency does not retrigger"(
     fw: ReactiveFramework
   ) {
-    if (!fw.effectCleanup) throw new SkipTest("no effectCleanup");
+    if (!hasEffectCleanup(fw)) throw new SkipTest("no effectCleanup");
     const a = fw.signal(0);
     let runs = 0;
 
@@ -613,7 +613,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   "#185 computed side effect write visible despite later throw"(
     fw: ReactiveFramework
   ) {
-    if (!fw.computedThrows) throw new SkipTest("no computedThrows");
+    if (!hasComputedThrows(fw)) throw new SkipTest("no computedThrows");
     const src = fw.signal(0);
     const side = fw.signal(-1);
 

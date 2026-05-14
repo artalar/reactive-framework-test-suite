@@ -1,6 +1,6 @@
 import { expect } from "./assert.js";
 import type { ReactiveFramework } from "./framework.js";
-import { SkipTest } from "./framework.js";
+import { SkipTest, hasEffectCleanup } from "./framework.js";
 
 export const section = "Batching / Transaction";
 export const cases: Record<string, (fw: ReactiveFramework) => any> = {
@@ -202,7 +202,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   "#120 cleanup writes inside effect are implicitly batched"(
     fw: ReactiveFramework
   ) {
-    if (!fw.effectCleanup) throw new SkipTest("no effectCleanup");
+    if (!hasEffectCleanup(fw)) throw new SkipTest("no effectCleanup");
     const a = fw.signal(0);
     const b = fw.signal(0);
     const log: string[] = [];

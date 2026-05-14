@@ -32,6 +32,4 @@ export const preactSignalsFramework: ReactiveFramework = {
   untracked(fn) {
     return untracked(fn);
   },
-  effectCleanup: true,
-  computedThrows: true,
 };

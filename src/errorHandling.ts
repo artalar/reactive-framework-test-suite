@@ -1,13 +1,13 @@
 import { expect } from "./assert.js";
 import type { ReactiveFramework } from "./framework.js";
-import { SkipTest } from "./framework.js";
+import { SkipTest, hasEffectCleanup, hasComputedThrows } from "./framework.js";
 
 export const section = "Error Handling";
 export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   "#84 graph stays consistent after error in initial computed"(
     fw: ReactiveFramework
   ) {
-    if (!fw.computedThrows) throw new SkipTest("no computedThrows");
+    if (!hasComputedThrows(fw)) throw new SkipTest("no computedThrows");
     const a = fw.signal(0);
     const b = fw.computed(() => {
       if (a.read() === 0) throw new Error("initial error");
@@ -23,7 +23,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   "#85 graph stays consistent after error in computed re-evaluation"(
     fw: ReactiveFramework
   ) {
-    if (!fw.computedThrows) throw new SkipTest("no computedThrows");
+    if (!hasComputedThrows(fw)) throw new SkipTest("no computedThrows");
     const a = fw.signal(1);
     const b = fw.computed(() => {
       if (a.read() === 2) throw new Error("re-eval error");
@@ -42,7 +42,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   "#87 errors in one computed don't leak to unrelated dependents"(
     fw: ReactiveFramework
   ) {
-    if (!fw.computedThrows) throw new SkipTest("no computedThrows");
+    if (!hasComputedThrows(fw)) throw new SkipTest("no computedThrows");
     const a = fw.signal(0);
     const b = fw.signal(10);
 
@@ -64,7 +64,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   },
 
   "#89 effect cleanup reset when effect throws"(fw: ReactiveFramework) {
-    if (!fw.effectCleanup) throw new SkipTest("no effectCleanup");
+    if (!hasEffectCleanup(fw)) throw new SkipTest("no effectCleanup");
     const a = fw.signal(0);
     let cleanupCalled = false;
 
@@ -89,7 +89,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   },
 
   "#90 effect disposed when cleanup throws"(fw: ReactiveFramework) {
-    if (!fw.effectCleanup) throw new SkipTest("no effectCleanup");
+    if (!hasEffectCleanup(fw)) throw new SkipTest("no effectCleanup");
     const a = fw.signal(0);
     let effectRuns = 0;
 
@@ -120,7 +120,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   "#91 exception halts propagation but other branches remain intact"(
     fw: ReactiveFramework
   ) {
-    if (!fw.computedThrows) throw new SkipTest("no computedThrows");
+    if (!hasComputedThrows(fw)) throw new SkipTest("no computedThrows");
     const a = fw.signal(0);
     const b = fw.signal(10);
 
@@ -152,7 +152,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   "#92 no stale scheduled updates left after exception"(
     fw: ReactiveFramework
   ) {
-    if (!fw.computedThrows) throw new SkipTest("no computedThrows");
+    if (!hasComputedThrows(fw)) throw new SkipTest("no computedThrows");
     const a = fw.signal(0);
     const b = fw.computed(() => {
       if (a.read() === 1) throw new Error("stale error");
@@ -202,7 +202,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   "#155 errors cached when watched by effect (live caching)"(
     fw: ReactiveFramework
   ) {
-    if (!fw.computedThrows) throw new SkipTest("no computedThrows");
+    if (!hasComputedThrows(fw)) throw new SkipTest("no computedThrows");
     const a = fw.signal(0);
     let computeCalls = 0;
     const c = fw.computed(() => {
@@ -272,7 +272,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   "#211 computed error chain: downstream computed also throws"(
     fw: ReactiveFramework
   ) {
-    if (!fw.computedThrows) throw new SkipTest("no computedThrows");
+    if (!hasComputedThrows(fw)) throw new SkipTest("no computedThrows");
     const a = fw.signal(0);
     const b = fw.computed(() => {
       if (a.read() === 1) throw new Error("source error");
@@ -292,7 +292,7 @@ export const cases: Record<string, (fw: ReactiveFramework) => any> = {
   },
 
   "#93 exception recovery in computed"(fw: ReactiveFramework) {
-    if (!fw.computedThrows) throw new SkipTest("no computedThrows");
+    if (!hasComputedThrows(fw)) throw new SkipTest("no computedThrows");
     const a = fw.signal(true);
     const b = fw.computed(() => {
       if (a.read()) throw new Error("fail");
